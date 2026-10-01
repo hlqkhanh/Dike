@@ -593,6 +593,8 @@ Mỗi giai đoạn chỉ bắt đầu khi tiêu chí hoàn thành của giai đo
 
 ### Giai đoạn 1 — Nền tảng backend và local infrastructure
 
+Chi tiết task, ownership và nghiệm thu: [STAGE_1.md](STAGE_1.md).
+
 - Scaffold từ đầu `apps/web`, `apps/api`, `apps/worker` và các package `api-client`, `contracts`, `config`, `ui` theo kiến trúc mục tiêu.
 - Bootstrap NestJS theo module, config và global exception filter; không tạo controller/service nguyên khối.
 - Bootstrap Next.js App Router với app shell tối thiểu và design token Urban Mint mới; chưa triển khai màn hình nghiệp vụ.
