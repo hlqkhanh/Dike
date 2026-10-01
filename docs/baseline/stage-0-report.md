@@ -9,10 +9,10 @@ configuration, architecture decisions, security policy, developer tooling and CI
 definitions only. Application source code, production credentials and legacy data
 are intentionally absent.
 
-The GitHub-hosted controls remain pending until the repository owner restores CLI
-authentication and supplies the final three-member access list. Stage 0 must not be
-declared fully complete until the controls in the pending section are verified on
-GitHub.
+The public repository is available at `https://github.com/hlqkhanh/Dike`. The owner
+has chosen a lightweight trusted-team workflow: members with `Write` access may merge
+their own work or push low-risk changes directly to `main`. CI and review remain
+recommended controls but are not enforced as merge requirements.
 
 ## Baseline
 
@@ -34,8 +34,8 @@ GitHub.
 - CI jobs named `quality`, `test` and `build`, with read-only default permissions.
 - CodeQL, dependency review, production dependency audit and CycloneDX SBOM workflows.
 - Dependabot for npm and GitHub Actions dependencies.
-- Six accepted ADRs and a dependency-aware implementation backlog.
-- Security, contribution, conduct, ownership and emergency-bypass documentation.
+- Seven accepted ADRs and a dependency-aware implementation backlog.
+- Security, contribution, conduct, ownership and repository-recovery documentation.
 - Public-repository templates and an all-rights-reserved notice.
 
 ## Verification evidence
@@ -61,36 +61,30 @@ GitHub.
 4. ADR-0004: Cloudflare R2 file storage.
 5. ADR-0005: deployment topology.
 6. ADR-0006: repository and supply-chain security.
+7. ADR-0007: lightweight collaboration, superseding ADR-0006 enforcement rules.
 
-## Pending GitHub-hosted verification
+## GitHub-hosted status and pending administration
 
-The local GitHub CLI credential for account `hlqkhanh` is invalid. The following
-operations were therefore not attempted or claimed as complete:
-
-- Create the public GitHub repository and push `main` plus `planning-v0.1.0`.
-- Invite the three named members, assign least privilege and verify 2FA.
-- Ensure two recoverable administrators and no shared accounts or unexplained apps.
-- Enable private vulnerability reporting, secret scanning and push protection.
-- Create and test the `main-protection` ruleset, including one independent approval,
-  stale-review dismissal, conversation resolution, linear history, and blocking
-  direct push, force push and branch deletion.
-- Require `quality`, `test`, `build`, `secret-scan`, `dependency-review`,
-  `dependency-audit` and `codeql`.
-- Configure squash-only merge and automatic feature-branch deletion.
-- Create GitHub milestones, labels and project-board views from `docs/backlog.md`.
-- Exercise fork-PR isolation and confirm CodeQL/dependency results in GitHub Security.
-
-These are server-side controls and cannot be proven by repository files alone. After
-reauthentication, follow `docs/security/ownership.md` and
-`docs/operations/emergency-branch-bypass.md`, then append the GitHub URLs, reviewers
-and test evidence to this report.
+- Public repository, `main` and `planning-v0.1.0` exist on GitHub.
+- Secret Scan and Dependency Audit completed successfully on the initial push.
+- CI, CodeQL, Dependabot and dependency review remain enabled as advisory automation.
+- No `main` protection ruleset or required approval/status checks are planned under
+  the current lightweight workflow.
+- The final collaborators still need to be invited with `Write` access and confirm
+  separate accounts plus 2FA.
+- `Admin` should remain with the owner and at most one recovery administrator.
+- Private vulnerability reporting, secret scanning and push protection should be
+  enabled where the repository settings make them available.
+- GitHub milestones, labels and project-board views may be created from
+  `docs/backlog.md`; they are coordination aids rather than merge gates.
 
 ## Risks carried into Stage 1
 
-- CI definitions have been validated locally but have not yet run on GitHub-hosted
-  runners.
+- Without branch protection, GitHub cannot stop a trusted member from pushing a
+  failing change, force-pushing or deleting `main`; team policy and recovery practice
+  are the controls.
 - There are no application tests or builds until the Stage 1 workspaces are created.
-- Owner placeholders in `CODEOWNERS` and the ownership matrix must be replaced if the
-  final GitHub team differs from the current repository owner.
+- `CODEOWNERS` is advisory unless branch protection later requires its review. Owner
+  placeholders must be replaced if the final team differs from the current owner.
 - Cloud and deployment credentials must use environment separation and must never be
   committed; prefer short-lived or federated credentials when providers support them.

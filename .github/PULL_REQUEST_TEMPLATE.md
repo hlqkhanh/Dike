@@ -4,7 +4,7 @@ Describe the outcome and why it is needed.
 
 ## Verification
 
-- [ ] `pnpm ci` passes locally
+- [ ] `corepack pnpm run ci` passes locally, or failures are explained
 - [ ] Tests were added/updated, or the reason they are unnecessary is documented
 - [ ] Documentation and API contracts were updated when relevant
 

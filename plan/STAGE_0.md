@@ -2,23 +2,24 @@
 
 ## 1. Mục tiêu và nguyên tắc
 
-Giai đoạn 0 chưa triển khai auth hay nghiệp vụ mới. Mục tiêu là khởi tạo một repository greenfield có thể phát triển lâu dài mà không làm rò rỉ secret, không cho code chưa kiểm tra vào `main` và khóa dependency có thể tái lập. Source prototype cũ đã bị xóa có chủ đích; không có code hoặc dữ liệu legacy cần bảo tồn hay migrate.
+Giai đoạn 0 chưa triển khai auth hay nghiệp vụ mới. Mục tiêu là khởi tạo một repository greenfield có thể phát triển lâu dài mà không làm rò rỉ secret, cung cấp kiểm tra tự động cho thay đổi và khóa dependency có thể tái lập. Source prototype cũ đã bị xóa có chủ đích; không có code hoặc dữ liệu legacy cần bảo tồn hay migrate.
 
 Không thể cam kết tuyệt đối “không bị hack”. Giai đoạn này tập trung vào:
 
-- Bảo vệ tài khoản GitHub và nhánh `main`.
+- Bảo vệ tài khoản GitHub và khả năng khôi phục repository.
 - Ngăn secret, dữ liệu cá nhân và artefact local bị commit.
 - Giảm rủi ro dependency/package độc hại.
 - Không cho CI của pull request không tin cậy tiếp cận secret.
-- Bắt buộc lint, typecheck, test, build và security scan trước merge.
+- Cung cấp lint, typecheck, test, build và security scan để thành viên tự kiểm tra trước khi chia sẻ thay đổi.
 - Ghi lại các quyết định kiến trúc để tránh thay đổi tùy tiện.
 
 Repo được chốt là:
 
 - GitHub repository công khai.
 - Không cấp giấy phép open-source; người khác được xem code nhưng không mặc nhiên có quyền sử dụng.
-- Mọi thay đổi vào `main` qua pull request.
-- Cần ít nhất một approval và toàn bộ CI xanh.
+- Thành viên được tin cậy có quyền `Write` được tự merge hoặc push thay đổi rủi ro thấp trực tiếp vào `main`.
+- Pull request, review độc lập và CI xanh được khuyến nghị cho thay đổi lớn hoặc nhạy cảm nhưng không bị ép bằng ruleset.
+- Quyền `Admin` chỉ dành cho chủ repository và tối đa một người dự phòng khôi phục.
 - Không bắt buộc ký từng commit.
 - Baseline tài liệu greenfield được giữ bằng annotated Git tag; không tạo tag giả danh source prototype.
 - Node.js 22 và pnpm 10 được dùng thống nhất.
@@ -358,50 +359,42 @@ pnpm run ci
 
 ---
 
-### G0-09 — GitHub Ruleset cho `main`
+### G0-09 — Quyền GitHub và flow cộng tác nhẹ
 
 **Phụ thuộc:** G0-05 và G0-08.
 
 **Công việc:**
 
-- Tạo ruleset áp dụng cho `main`.
-- Bắt buộc pull request trước khi merge.
-- Bắt buộc một approval.
-- Người push commit cuối không được tự approve thay đổi của mình.
-- Dismiss approval cũ khi có commit mới.
-- Bắt buộc resolve toàn bộ conversation.
-- Bắt buộc required status checks:
+- Không tạo ruleset bắt buộc cho `main` trong giai đoạn nhóm ba người tin cậy.
+- Thành viên có quyền `Write` được tạo branch, push, mở PR, tự merge hoặc push trực tiếp thay đổi rủi ro thấp.
+- Giữ quyền `Admin` cho chủ repository và tối đa một người dự phòng; không cấp `Admin` chỉ để một thành viên có thể code/merge.
+- Khuyến nghị dùng branch ngắn hạn và pull request cho thay đổi lớn, xuyên nhiều area hoặc liên quan auth, quyền, dữ liệu, dependency, workflow và infrastructure.
+- Review độc lập và CI xanh là tín hiệu chất lượng được khuyến nghị, không phải điều kiện merge do GitHub cưỡng chế.
+- Duy trì các check quan sát được:
   - `quality`
   - `test`
   - `build`
   - `secret-scan`
   - `dependency-review`
+  - `dependency-audit`
   - `codeql`
-- Bắt buộc branch được cập nhật với `main` trước khi merge.
-- Bật linear history.
-- Chỉ cho squash merge.
-- Tắt merge commit và rebase merge.
-- Cấm force push và xóa `main`.
-- Không cho Admin bypass trong hoạt động bình thường.
-- Tự động xóa feature branch sau merge.
-- CODEOWNERS:
-  - Thay đổi `.github/workflows/**` cần project maintainer review.
-  - Thay đổi security/config/dependency cần backend hoặc security owner review.
-- GitHub hỗ trợ chặn merge khi thiếu review hoặc CI và cấm force-push/xóa protected branch; dùng ruleset này làm enforcement, không chỉ viết thành quy ước ([GitHub protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)).
+- Không force-push hoặc xóa `main` trong hoạt động bình thường dù GitHub không chặn kỹ thuật.
+- `CODEOWNERS` chỉ là bản đồ người nên được hỏi review, không tạo approval bắt buộc.
+- Có thể bật tự động xóa feature branch sau merge; không bắt buộc một merge strategy duy nhất.
+- Đánh giá lại ruleset khi nhóm mở rộng, xảy ra incident hoặc trước khi production có yêu cầu kiểm soát thay đổi cao hơn.
 
 **Đầu ra:**
 
 - `CODEOWNERS`.
-- Ruleset `main-protection`.
-- Tài liệu emergency bypass.
+- Tài liệu quyền thành viên và khôi phục repository.
 
 **Nghiệm thu:**
 
-- Push trực tiếp vào `main` bị từ chối.
-- PR chưa review không merge được.
-- PR có CI fail không merge được.
-- Commit mới làm approval cũ mất hiệu lực.
-- Không thể force-push hoặc xóa `main`.
+- Thành viên `Write` có thể push, tạo branch và merge mà không cần `Admin`.
+- CI/security checks chạy và hiển thị kết quả nhưng không phải required checks.
+- Tài liệu nêu rõ trường hợp nên dùng PR/review và trách nhiệm khi push kết quả fail.
+- Chỉ người quản trị tối thiểu có thể đổi access, security settings hoặc vòng đời repository.
+- Có quy trình khôi phục cho thao tác Git nguy hiểm; force-push/xóa `main` vẫn bị cấm bởi quy ước nhóm.
 
 ---
 
@@ -441,7 +434,7 @@ pnpm run ci
 
 - PR hợp lệ chạy đủ các job.
 - PR từ fork không đọc được repository secret.
-- Lỗi lint, test, build hoặc cấu hình workspace chặn merge; khi Giai đoạn 1 thêm app, các job tự động trở thành gate thật cho app.
+- Lỗi lint, test, build hoặc cấu hình workspace được hiển thị rõ; người push/merge chịu trách nhiệm sửa. Khi Giai đoạn 1 thêm app, các job tự động kiểm tra app nhưng chưa bị cấu hình thành merge gate.
 - Workflow không có quyền ghi repository.
 
 ---
@@ -462,7 +455,7 @@ pnpm run ci
   - Lịch chạy hàng tuần.
 - Bật dependency review trên pull request.
 - Chạy `pnpm audit --prod`.
-- High/critical vulnerability chặn merge, trừ khi có security exception gồm:
+- High/critical vulnerability phải được sửa hoặc có security exception trước khi phát hành production, dù không tự động chặn merge. Exception gồm:
   - CVE/advisory.
   - Phân tích ảnh hưởng.
   - Biện pháp giảm thiểu.
@@ -486,7 +479,7 @@ pnpm run ci
 **Nghiệm thu:**
 
 - Commit chứa fake provider token đã biết bị push protection hoặc CI chặn.
-- Dependency high/critical làm PR fail.
+- Dependency high/critical làm security job fail và phải được xử lý trước production release.
 - CodeQL result xuất hiện trong Security tab.
 - Không có workflow action tham chiếu floating tag.
 - Security exception hết hạn tự trở thành blocker.
@@ -584,10 +577,16 @@ Mỗi ADR phải có: status, context, decision, alternatives, consequences, sec
 
 6. `ADR-0006 — Repository và supply-chain security`
    - Public repository, all rights reserved.
-   - PR + một review.
+   - Quyết định enforcement PR + review ban đầu; phần này được ADR-0007 thay thế.
    - CI least privilege.
    - Lockfile bắt buộc.
    - Secret scanning/CodeQL/dependency review.
+
+7. `ADR-0007 — Lightweight collaboration`
+   - Thành viên tin cậy dùng quyền `Write`; không cần `Admin` để code hoặc merge.
+   - PR, review và CI xanh được khuyến nghị theo mức rủi ro, không bắt buộc bằng ruleset.
+   - Giữ nguyên hooks và toàn bộ automation bảo mật ở chế độ advisory.
+   - Cấm force-push/xóa `main` theo quy ước và có tài liệu khôi phục repository.
 
 **Nghiệm thu:**
 
@@ -663,9 +662,9 @@ Mỗi ADR phải có: status, context, decision, alternatives, consequences, sec
 5. Xác nhận `pnpm dev` thông báo rõ ứng dụng chưa được scaffold, không giả vờ khởi động thành công.
 6. Thử commit sai format.
 7. Thử commit secret mẫu.
-8. Thử push trực tiếp vào `main`.
-9. Thử merge PR chưa review.
-10. Thử merge PR có CI fail.
+8. Xác nhận thành viên `Write` có thể push/merge mà không cần quyền `Admin`.
+9. Xác nhận PR/review là tùy chọn và CODEOWNERS chỉ mang tính tư vấn.
+10. Xác nhận CI vẫn báo lỗi rõ ràng dù không được cấu hình chặn merge.
 11. Thử PR từ fork đọc secret.
 12. Checkout `planning-v0.1.0` và xác nhận baseline chỉ gồm kế hoạch/config greenfield.
 13. Kiểm tra Git history bằng Gitleaks.
@@ -675,7 +674,7 @@ Mỗi ADR phải có: status, context, decision, alternatives, consequences, sec
 **Báo cáo cuối giai đoạn phải ghi:**
 
 - Commit/tag baseline greenfield.
-- Các CI checks đang bắt buộc.
+- Các CI/security checks đang hoạt động và trạng thái advisory/required của chúng.
 - Kết quả secret scan.
 - Kết quả vulnerability scan.
 - Danh sách dependency exception nếu có.
@@ -707,8 +706,8 @@ pnpm run ci
 Quy trình thay đổi code:
 
 ```text
-Issue → feature branch → commit hooks → pull request
-→ CI/security checks → 1 approval → squash merge → main
+Issue → branch hoặc thay đổi nhỏ trực tiếp → commit hooks
+→ CI/security checks → review tùy theo rủi ro → merge/push → main
 ```
 
 Không có lệnh deploy production trong Giai đoạn 0.
@@ -723,12 +722,13 @@ Giai đoạn 0 chỉ hoàn thành khi:
 - Baseline kế hoạch được bảo toàn tại tag `planning-v0.1.0`; không tồn tại tag prototype giả.
 - Repo chỉ có một lockfile pnpm.
 - Fresh clone cài dependency và chạy quality/security checks thành công; test/build app chỉ trở thành bắt buộc sau khi app được scaffold ở Giai đoạn 1.
-- Push trực tiếp, force push và xóa `main` bị chặn.
-- PR cần một reviewer khác và toàn bộ required checks.
+- Thành viên `Write` có thể tự push/merge; `Admin` được giới hạn cho quản trị và khôi phục.
+- PR, review và CI xanh được khuyến nghị theo mức rủi ro nhưng không bị ruleset bắt buộc.
+- Force-push và xóa `main` bị cấm bởi quy ước nhóm và có tài liệu khôi phục nếu xảy ra sự cố.
 - CI chạy với quyền read-only và không cấp secret cho code từ fork.
 - Secret scanning, Gitleaks, CodeQL, dependency review và Dependabot hoạt động.
 - High/critical dependency vulnerability không thể bị bỏ qua âm thầm.
-- ADR cho sáu quyết định kiến trúc đã được review.
+- Bảy ADR đã được review; ADR-0007 thay thế phần enforcement cộng tác của ADR-0006 mà không sửa lịch sử quyết định cũ.
 - PLAN đã được chuyển thành backlog có dependency và acceptance criteria.
 - README nêu rõ dự án đang khởi tạo greenfield và chưa production-ready.
 - Repository ghi rõ “All Rights Reserved”, không tự nhận là open-source.

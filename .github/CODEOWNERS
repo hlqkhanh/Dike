@@ -1,3 +1,4 @@
+# Advisory ownership map. Reviews are recommended but not enforced by a branch ruleset.
 * @hlqkhanh
 /.github/workflows/ @hlqkhanh
 /docs/security/ @hlqkhanh
