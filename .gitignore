@@ -1,0 +1,57 @@
+# Dependencies and package-manager state
+node_modules/
+.pnpm-store/
+.npm/
+
+# Build, test, and framework output
+.next/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Runtime data and local infrastructure
+apps/api/data/
+.data/
+.docker-data/
+infra/volumes/
+minio-data/
+mongo-data/
+redis-data/
+
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Logs, processes, and temporary files
+*.log
+*.pid
+*.seed
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Security/build reports generated locally
+sbom*.json
+artifacts/
+.secretlintcache
+
+# Editors and operating systems
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+Desktop.ini
+

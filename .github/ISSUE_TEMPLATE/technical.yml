@@ -1,0 +1,41 @@
+name: Technical task
+description: Track architecture, infrastructure, quality, or security work.
+title: 'chore: '
+labels: ['type:tech-debt']
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Required behavior
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Test scenarios
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Security and rollback considerations
+    validations:
+      required: true
