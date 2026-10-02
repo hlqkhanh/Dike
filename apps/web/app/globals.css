@@ -1,0 +1,121 @@
+@import 'tailwindcss';
+@import '@dike/ui/styles.css';
+
+* {
+  box-sizing: border-box;
+}
+html {
+  color-scheme: light;
+}
+body {
+  background:
+    radial-gradient(circle at top right, rgba(209, 250, 229, 0.8), transparent 34rem),
+    var(--dike-background);
+  color: var(--dike-foreground);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+a {
+  color: inherit;
+}
+.shell {
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: 0 20px;
+}
+.header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  min-height: 72px;
+}
+.brand {
+  align-items: center;
+  display: inline-flex;
+  font-size: 1.25rem;
+  font-weight: 800;
+  gap: 10px;
+}
+.brand-mark {
+  background: var(--dike-primary);
+  border-radius: 10px;
+  color: white;
+  display: grid;
+  height: 36px;
+  place-items: center;
+  width: 36px;
+}
+.hero {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: 1.25fr 0.75fr;
+  padding-block: 72px;
+}
+.eyebrow {
+  color: var(--dike-primary);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+h1 {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  margin: 14px 0 22px;
+  max-width: 760px;
+}
+.lead {
+  color: var(--dike-muted);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  max-width: 680px;
+}
+.status-card {
+  align-self: center;
+  box-shadow: 0 20px 60px rgba(16, 35, 29, 0.09);
+}
+.status-card h2 {
+  font-size: 1.1rem;
+  margin: 18px 0 8px;
+}
+.status-card p {
+  color: var(--dike-muted);
+  line-height: 1.6;
+}
+.status-meta {
+  border-top: 1px solid var(--dike-border);
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 18px;
+}
+.status-row {
+  display: flex;
+  font-size: 0.9rem;
+  justify-content: space-between;
+}
+.status-row span:first-child {
+  color: var(--dike-muted);
+}
+.retry {
+  margin-top: 14px;
+  width: 100%;
+}
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-block: 42px;
+  }
+  .header small {
+    display: none;
+  }
+}

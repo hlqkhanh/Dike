@@ -9,17 +9,28 @@
     "pnpm": ">=10 <11"
   },
   "scripts": {
-    "dev": "node scripts/run-workspaces.mjs dev",
+    "dev": "node scripts/dev.mjs",
+    "dev:apps": "corepack pnpm --filter \"./packages/**\" build && node scripts/run-workspaces.mjs dev --parallel",
     "build": "node scripts/run-workspaces.mjs build",
     "test": "node scripts/run-workspaces.mjs test",
-    "lint": "eslint . --max-warnings=0 && node scripts/run-workspaces.mjs lint",
+    "test:integration": "node scripts/run-workspaces.mjs test:integration",
+    "lint": "eslint \"*.mjs\" scripts --max-warnings=0 && node scripts/run-workspaces.mjs lint",
     "typecheck": "node scripts/run-workspaces.mjs typecheck",
+    "infra:up": "node scripts/infra.mjs up",
+    "infra:down": "node scripts/infra.mjs down",
+    "infra:logs": "node scripts/infra.mjs logs",
+    "infra:reset": "node scripts/infra.mjs reset",
+    "db:migrate": "corepack pnpm --filter @dike/api db:migrate",
+    "db:migrate:status": "corepack pnpm --filter @dike/api db:migrate:status",
+    "db:seed": "corepack pnpm --filter @dike/api db:seed",
+    "api:generate": "corepack pnpm --filter @dike/api-client generate",
+    "api:check": "corepack pnpm --filter @dike/api-client check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "security:secrets": "secretlint \"**/*\"",
     "security:audit": "corepack pnpm audit --prod --audit-level high",
     "sbom": "cdxgen -t js --no-recurse --no-install-deps --fail-on-error --output sbom.cdx.json .",
-    "ci": "corepack pnpm format:check && corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build && corepack pnpm security:secrets",
+    "ci": "corepack pnpm format:check && corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build && corepack pnpm api:check && corepack pnpm security:secrets",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -49,6 +60,15 @@
     "prettier": "3.6.2",
     "secretlint": "11.2.4",
     "typescript": "5.9.2",
-    "typescript-eslint": "8.71.0"
+    "typescript-eslint": "8.71.0",
+    "vite": "8.3.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@swc/core",
+      "esbuild",
+      "sharp"
+    ]
   }
 }

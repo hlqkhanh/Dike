@@ -1,0 +1,77 @@
+:root {
+  --dike-primary: #0f766e;
+  --dike-primary-hover: #115e59;
+  --dike-accent: #d1fae5;
+  --dike-background: #f7faf9;
+  --dike-surface: #ffffff;
+  --dike-foreground: #10231d;
+  --dike-muted: #52665e;
+  --dike-border: #d7e3de;
+  --dike-danger: #b42318;
+  --dike-focus: #0d9488;
+  --dike-radius-sm: 8px;
+  --dike-radius-md: 12px;
+  --dike-radius-lg: 16px;
+}
+
+.dike-button {
+  align-items: center;
+  background: var(--dike-primary);
+  border: 0;
+  border-radius: var(--dike-radius-sm);
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-weight: 700;
+  gap: 8px;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 16px;
+}
+
+.dike-button:hover:not(:disabled) {
+  background: var(--dike-primary-hover);
+}
+.dike-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+.dike-button:focus-visible {
+  outline: 3px solid var(--dike-focus);
+  outline-offset: 3px;
+}
+
+.dike-card {
+  background: var(--dike-surface);
+  border: 1px solid var(--dike-border);
+  border-radius: var(--dike-radius-lg);
+  padding: 24px;
+}
+
+.dike-status {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 700;
+  gap: 6px;
+  padding: 6px 10px;
+}
+
+.dike-status[data-status='ready'] {
+  background: var(--dike-accent);
+  color: #065f46;
+}
+.dike-status[data-status='loading'] {
+  background: #e5e7eb;
+  color: #374151;
+}
+.dike-status[data-status='warning'] {
+  background: #fef3c7;
+  color: #78350f;
+}
+.dike-status[data-status='error'] {
+  background: #fee2e2;
+  color: var(--dike-danger);
+}

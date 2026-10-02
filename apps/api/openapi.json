@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health/live": {
+      "get": {
+        "operationId": "getLiveHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["health"]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "getReadyHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["health"]
+      }
+    }
+  },
+  "info": {
+    "title": "Dike API",
+    "description": "",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "HealthResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ok", "unavailable"]
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["status"],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["up", "down"]
+                }
+              }
+            }
+          }
+        },
+        "required": ["status", "requestId"]
+      }
+    }
+  }
+}

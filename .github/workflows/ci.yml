@@ -42,6 +42,8 @@ jobs:
         run: pnpm lint
       - name: Typecheck
         run: pnpm typecheck
+      - name: Check generated API client
+        run: pnpm api:check
 
   test:
     name: test
@@ -64,6 +66,38 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Run tests
         run: pnpm test
+
+  integration:
+    name: integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.17.1
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Start test infrastructure
+        run: pnpm infra:up
+      - name: Run migrations
+        run: pnpm db:migrate
+      - name: Run integration tests
+        run: pnpm test:integration
+      - name: Capture container logs
+        if: failure()
+        run: docker compose --project-name dike-local --env-file .env.local --file infra/docker/compose.yml logs --no-color
+      - name: Stop test infrastructure
+        if: always()
+        run: pnpm infra:down
 
   build:
     name: build

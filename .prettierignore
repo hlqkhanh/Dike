@@ -5,4 +5,5 @@ build/
 coverage/
 artifacts/
 pnpm-lock.yaml
+apps/web/next-env.d.ts
 

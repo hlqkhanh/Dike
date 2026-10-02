@@ -2,6 +2,7 @@
 node_modules/
 .pnpm-store/
 .npm/
+.corepack/
 
 # Build, test, and framework output
 .next/
@@ -25,6 +26,7 @@ redis-data/
 .env
 .env.*
 !.env.example
+!.env.test.example
 *.pem
 *.key
 *.p12
