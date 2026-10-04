@@ -4,7 +4,7 @@ Dike is a greenfield ride-sharing platform being designed for a controlled produ
 
 ## Current status
 
-- Stage: **4 — Profiles, privacy and files (local implementation; integration/E2E acceptance pending)**
+- Stage: **5 backend — Sandbox verification, vehicles and communities (local implementation; frontend and runtime acceptance pending)**
 - Production ready: **No**
 - Existing legacy application/data: **None**
 - Target clients: responsive Next.js web first, React Native mobile later
@@ -87,3 +87,5 @@ corepack pnpm run ci
 Copyright © 2026 Dike contributors. All rights reserved. This public repository is available for inspection only; no license to copy, modify, distribute, sublicense, or use the code commercially is granted. See [RIGHTS.md](RIGHTS.md).
 
 Stage 4 local setup and acceptance: [profiles and files runbook](docs/operations/profiles-files.md).
+
+Stage 5 backend setup, seed and API workflows: [local backend runbook](docs/operations/stage5-backend.md).

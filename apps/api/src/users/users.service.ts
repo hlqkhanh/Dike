@@ -58,6 +58,21 @@ export class UsersService {
       .toArray();
     return users.map(projectProfile);
   }
+  async publicVehicles(viewerId: Types.ObjectId, targetId: Types.ObjectId) {
+    await this.visible(viewerId, targetId);
+    const vehicles = await this.connection
+      .collection('vehicles')
+      .find({ userId: targetId, status: 'APPROVED' })
+      .limit(10)
+      .toArray();
+    return vehicles.map((vehicle) => ({
+      id: String(vehicle._id),
+      type: vehicle.type as string,
+      model: vehicle.model as string,
+      color: vehicle.color as string,
+      passengerCapacity: vehicle.passengerCapacity as number,
+    }));
+  }
   private async mutate(id: Types.ObjectId, fields: Partial<UserDocument>, event: string) {
     return new TransactionManager(this.connection).run(async (session) => {
       const user = await this.connection

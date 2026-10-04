@@ -35,6 +35,8 @@ const apiConfigSchema = z
       .transform((value) => value === 'true')
       .default(false),
     S3_REGION: z.string().min(1).default('us-east-1'),
+    EKYC_PROVIDER: z.enum(['disabled', 'mock']).default('disabled'),
+    EKYC_WEBHOOK_SECRET: z.string().default(''),
     AUTH_PROVIDER: z.enum(['google', 'mock']).default('mock'),
     GOOGLE_CLIENT_ID: z.string().min(3),
     GOOGLE_CLIENT_SECRET: z.string().min(8),
@@ -75,6 +77,18 @@ const apiConfigSchema = z
   })
   .superRefine((config, context) => {
     const hosted = config.APP_ENV === 'staging' || config.APP_ENV === 'production';
+    if (
+      config.EKYC_PROVIDER === 'mock' &&
+      (hosted ||
+        config.EKYC_WEBHOOK_SECRET.length < 32 ||
+        keyringSecrets(config.BFF_KEYRING)?.includes(config.EKYC_WEBHOOK_SECRET))
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['EKYC_PROVIDER'],
+        message:
+          'Mock eKYC requires local/test and an independent webhook secret of at least 32 characters',
+      });
     if (config.S3_BUCKET_PUBLIC === config.S3_BUCKET_PRIVATE)
       context.addIssue({
         code: 'custom',

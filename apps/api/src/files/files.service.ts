@@ -51,10 +51,7 @@ export class FilesService {
     ).map((file) => this.view(file));
   }
   async create(ownerId: Types.ObjectId, input: CreateUploadDto) {
-    if (
-      input.purpose === 'VERIFICATION_SANDBOX' &&
-      !['local', 'test'].includes(this.config.APP_ENV)
-    )
+    if (input.purpose !== 'AVATAR' && !['local', 'test'].includes(this.config.APP_ENV))
       throw new ApiError(
         'FILE_PURPOSE_DISABLED',
         'Verification document collection is not enabled',
@@ -266,6 +263,16 @@ export class FilesService {
           { session, returnDocument: 'after' },
         );
       if (!user) throw this.notFound();
+      const attached = await this.files.findOne(
+        { _id: fileId, ownerId, evidenceLocked: true },
+        { session },
+      );
+      if (attached)
+        throw new ApiError(
+          'EVIDENCE_LOCKED',
+          'Cancel the pending application before deleting its evidence',
+          409,
+        );
       const file = await this.files.findOneAndUpdate(
         { _id: fileId, ownerId, status: { $ne: 'DELETED' } },
         { $set: { status: 'DELETE_PENDING', deleteAfter: new Date(Date.now() + 900000) } },

@@ -470,6 +470,8 @@ export class AuthService implements AuthApplication {
         displayName: user.displayName,
         avatarUrl: user.avatarUrl,
         phoneStatus: user.phoneStatus,
+        identityStatus: user.identityStatus ?? 'NOT_SUBMITTED',
+        identityMode: 'SANDBOX',
         maskedPhone,
         roles: effectiveRoles(user),
       },

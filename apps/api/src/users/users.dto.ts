@@ -34,11 +34,21 @@ export class DeletionDto {
   @ApiProperty({ enum: ['DELETE'] }) @IsIn(['DELETE']) confirmation!: 'DELETE';
 }
 export class ProfileDto {
+  @ApiProperty({ enum: ['NOT_SUBMITTED', 'PENDING', 'VERIFIED', 'REJECTED'] })
+  identityStatus!: string;
+  @ApiProperty({ enum: ['SANDBOX'] }) identityMode!: string;
   @ApiProperty({ type: String }) id!: string;
   @ApiProperty({ type: String }) displayName!: string;
   @ApiProperty({ type: String }) bio!: string;
   @ApiProperty({ type: String, nullable: true }) avatarUrl!: string | null;
   @ApiProperty({ type: Boolean }) phoneVerified!: boolean;
+}
+export class PublicVehicleDto {
+  @ApiProperty({ type: String }) id!: string;
+  @ApiProperty({ enum: ['MOTORBIKE', 'CAR'] }) type!: string;
+  @ApiProperty({ type: String }) model!: string;
+  @ApiProperty({ type: String }) color!: string;
+  @ApiProperty({ type: Number }) passengerCapacity!: number;
 }
 export class DeletionResponseDto {
   @ApiProperty({ enum: ['DELETION_PENDING'] }) status!: 'DELETION_PENDING';

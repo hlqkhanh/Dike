@@ -23,6 +23,9 @@ export interface UserDocument {
   avatarFileId?: Types.ObjectId;
   privacy?: import('@dike/contracts').PrivacySettings;
   profileVersion?: number;
+  identityStatus?: 'NOT_SUBMITTED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+  identityMode?: 'SANDBOX';
+  approvedVehicleCount?: number;
   deletionRequestedAt?: Date;
   deletionDueAt?: Date;
   purgeAt?: Date;

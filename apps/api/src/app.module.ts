@@ -1,4 +1,5 @@
 import { UsersModule } from './users/users.module.js';
+import { WorkflowsModule } from './workflows/workflows.module.js';
 import { FilesModule } from './files/files.module.js';
 import { StorageModule } from './files/storage.module.js';
 import { type MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
@@ -29,6 +30,7 @@ export class AppModule implements NestModule {
         StorageModule.register(options.connectInfrastructure),
         UsersModule.register(options.connectInfrastructure),
         FilesModule.register(options.connectInfrastructure),
+        WorkflowsModule.register(options.connectInfrastructure),
         HealthModule,
       ],
       providers: [RequestContextMiddleware, RequestLoggerMiddleware],

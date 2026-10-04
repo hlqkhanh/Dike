@@ -34,6 +34,21 @@ interface AuthorizationCode {
 }
 
 const accounts: Record<string, Account> = {
+  'stage5-admin-one': {
+    sub: 'mock-google-stage5-admin-one',
+    email: 'stage5-admin-one@dike.invalid',
+    name: 'Sandbox Admin One',
+  },
+  'stage5-admin-two': {
+    sub: 'mock-google-stage5-admin-two',
+    email: 'stage5-admin-two@dike.invalid',
+    name: 'Sandbox Admin Two',
+  },
+  'stage5-member': {
+    sub: 'mock-google-stage5-member',
+    email: 'stage5-member@dike.invalid',
+    name: 'Sandbox Member',
+  },
   alice: { sub: 'mock-google-alice', email: 'alice@dike.invalid', name: 'Alice Dike' },
   bob: { sub: 'mock-google-bob', email: 'bob@dike.invalid', name: 'Bob Dike' },
   'otp-tester': {

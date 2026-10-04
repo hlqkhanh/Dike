@@ -639,6 +639,8 @@ Trạng thái: đã bổ sung implementation OTP local/test và role; chưa nghi
 
 ### Giai đoạn 5 — eKYC sandbox, phương tiện và cộng đồng
 
+Backend local: `VERIFIED_MEMBER` yêu cầu OTP và danh tính sandbox đã được admin duyệt; `APPROVED_DRIVER` thêm ít nhất một xe được duyệt. OTP riêng lẻ không cấp quyền kinh doanh này. Admin/moderator vẫn dùng role quản trị + OTP. Xem [ADR 0008](../docs/architecture/ADR-0008-sandbox-verification.md) và [runbook backend](../docs/operations/stage5-backend.md). Frontend Stage 5 và nghiệm thu tích hợp là các phần riêng, chưa coi hoàn tất toàn stage.
+
 - Tạo adapter eKYC, xác thực webhook signature và xử lý callback idempotent.
 - Chỉ dùng dữ liệu tổng hợp trong sandbox.
 - Admin duyệt/từ chối hồ sơ, phương tiện và membership với lý do/audit log.

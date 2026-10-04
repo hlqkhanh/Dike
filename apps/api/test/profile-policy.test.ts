@@ -25,7 +25,15 @@ describe('profile privacy policy', () => {
   };
   it('projects only allowed public profile fields and defaults discovery off', () => {
     expect(Object.keys(projectProfile(user)).sort()).toEqual(
-      ['avatarUrl', 'bio', 'displayName', 'id', 'phoneVerified'].sort(),
+      [
+        'avatarUrl',
+        'bio',
+        'displayName',
+        'id',
+        'phoneVerified',
+        'identityStatus',
+        'identityMode',
+      ].sort(),
     );
     expect(privacyOf(user).discoverable).toBe(false);
     expect(JSON.stringify(projectProfile(user))).not.toContain('private-hash');

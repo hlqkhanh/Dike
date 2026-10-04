@@ -40,6 +40,7 @@ import {
   SearchUsersDto,
   UpdateProfileDto,
   UserIdDto,
+  PublicVehicleDto,
 } from './users.dto.js';
 
 @ApiTags('profiles')
@@ -157,5 +158,13 @@ export class UsersController {
   async member(@Req() request: Request, @Param(strictDto(UserIdDto)) params: UserIdDto) {
     const { id, users } = await this.access(request);
     return users.visible(id, new Types.ObjectId(params.userId));
+  }
+  @Get('users/:userId/vehicles')
+  @ApiOperation({ operationId: 'getMemberVehicles' })
+  @ApiParam({ name: 'userId', type: String })
+  @ApiOkResponse({ type: PublicVehicleDto, isArray: true })
+  async memberVehicles(@Req() request: Request, @Param(strictDto(UserIdDto)) params: UserIdDto) {
+    const { id, users } = await this.access(request);
+    return users.publicVehicles(id, new Types.ObjectId(params.userId));
   }
 }

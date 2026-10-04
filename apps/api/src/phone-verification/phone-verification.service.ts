@@ -255,7 +255,6 @@ export class PhoneVerificationService {
           { _id: userId },
           {
             $set: { phoneStatus: 'VERIFIED', phoneVerifiedAt: new Date(), updatedAt: new Date() },
-            $addToSet: { roles: 'VERIFIED_MEMBER' },
             $inc: { roleVersion: 1 },
           },
           { session },

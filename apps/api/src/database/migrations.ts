@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { stage5Migration } from './stage5-migration.js';
 
 import type { Connection } from 'mongoose';
 
@@ -166,6 +167,7 @@ export const migrations: Migration[] = [
         );
     },
   },
+  stage5Migration,
 ];
 
 function checksum(migration: Migration): string {

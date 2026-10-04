@@ -796,6 +796,69 @@
         "tags": ["profiles"]
       }
     },
+    "/users/{userId}/vehicles": {
+      "get": {
+        "operationId": "getMemberVehicles",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicVehicleDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["profiles"]
+      }
+    },
     "/files": {
       "get": {
         "operationId": "listMyFiles",
@@ -1082,6 +1145,1383 @@
         ],
         "summary": "",
         "tags": ["files"]
+      }
+    },
+    "/me/verification": {
+      "get": {
+        "operationId": "getMyVerification",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["verification"]
+      }
+    },
+    "/verification/applications": {
+      "post": {
+        "operationId": "createVerificationApplication",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["verification"]
+      }
+    },
+    "/verification/applications/{id}": {
+      "get": {
+        "operationId": "getVerificationApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["verification"]
+      }
+    },
+    "/verification/applications/{id}/submit": {
+      "post": {
+        "operationId": "submitVerificationApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["verification"]
+      }
+    },
+    "/verification/applications/{id}/cancel": {
+      "post": {
+        "operationId": "cancelVerificationApplication",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["verification"]
+      }
+    },
+    "/webhooks/ekyc/mock": {
+      "post": {
+        "operationId": "receiveSandboxEkycCallback",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["verification"]
+      }
+    },
+    "/me/vehicles": {
+      "get": {
+        "operationId": "listMyVehicles",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      },
+      "post": {
+        "operationId": "createMyVehicle",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehicleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      }
+    },
+    "/me/vehicles/{id}": {
+      "get": {
+        "operationId": "getMyVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      },
+      "put": {
+        "operationId": "updateMyVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVehicleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      }
+    },
+    "/me/vehicles/{id}/submit": {
+      "post": {
+        "operationId": "submitMyVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      }
+    },
+    "/me/vehicles/{id}/withdraw": {
+      "post": {
+        "operationId": "withdrawMyVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      }
+    },
+    "/me/vehicles/{id}/archive": {
+      "post": {
+        "operationId": "archiveMyVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["vehicles"]
+      }
+    },
+    "/communities": {
+      "get": {
+        "operationId": "listCommunities",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["communities"]
+      }
+    },
+    "/communities/{id}": {
+      "get": {
+        "operationId": "getCommunity",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["communities"]
+      }
+    },
+    "/me/memberships": {
+      "get": {
+        "operationId": "listMyMemberships",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["communities"]
+      }
+    },
+    "/communities/{id}/join": {
+      "post": {
+        "operationId": "joinCommunity",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["communities"]
+      }
+    },
+    "/communities/{id}/cancel-request": {
+      "post": {
+        "operationId": "cancelCommunityRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["communities"]
+      }
+    },
+    "/communities/{id}/leave": {
+      "post": {
+        "operationId": "leaveCommunity",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["communities"]
+      }
+    },
+    "/admin/verifications": {
+      "get": {
+        "operationId": "adminListVerifications",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/verifications/{id}": {
+      "get": {
+        "operationId": "adminGetVerification",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/verifications/{id}/decision": {
+      "post": {
+        "operationId": "adminDecideVerification",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/vehicles": {
+      "get": {
+        "operationId": "adminListVehicles",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/vehicles/{id}": {
+      "get": {
+        "operationId": "adminGetVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/vehicles/{id}/decision": {
+      "post": {
+        "operationId": "adminDecideVehicle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/memberships": {
+      "get": {
+        "operationId": "adminListMemberships",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/memberships/{id}": {
+      "get": {
+        "operationId": "adminGetMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/memberships/{id}/decision": {
+      "post": {
+        "operationId": "adminDecideMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/communities": {
+      "get": {
+        "operationId": "adminListCommunities",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      },
+      "post": {
+        "operationId": "adminCreateCommunity",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommunityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/communities/{id}": {
+      "put": {
+        "operationId": "adminUpdateCommunity",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommunityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/communities/{id}/archive": {
+      "post": {
+        "operationId": "adminArchiveCommunity",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowViewDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/verifications/{id}/evidence/{fileId}/access": {
+      "post": {
+        "operationId": "adminAccessVerificationEvidence",
+        "parameters": [
+          {
+            "name": "fileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/vehicles/{id}/evidence/{fileId}/access": {
+      "post": {
+        "operationId": "adminAccessVehicleEvidence",
+        "parameters": [
+          {
+            "name": "fileId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceUrlDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/audit": {
+      "get": {
+        "operationId": "adminWorkflowAudit",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceType",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "enum": ["verification", "vehicle", "membership", "community"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPageDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/sandbox/verification/{id}/run": {
+      "post": {
+        "operationId": "adminRunSandboxVerification",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
+      }
+    },
+    "/admin/sandbox/verification/{id}/retry": {
+      "post": {
+        "operationId": "adminRetrySandboxVerification",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SandboxDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["admin-workflows"]
       }
     },
     "/health/live": {
@@ -1371,6 +2811,14 @@
       "AuthUserDto": {
         "type": "object",
         "properties": {
+          "identityStatus": {
+            "type": "string",
+            "enum": ["NOT_SUBMITTED", "PENDING", "VERIFIED", "REJECTED"]
+          },
+          "identityMode": {
+            "type": "string",
+            "enum": ["SANDBOX"]
+          },
           "roles": {
             "type": "array",
             "items": {
@@ -1397,7 +2845,7 @@
             "nullable": true
           }
         },
-        "required": ["roles", "id", "displayName", "phoneStatus"]
+        "required": ["identityStatus", "identityMode", "roles", "id", "displayName", "phoneStatus"]
       },
       "DeviceSummaryDto": {
         "type": "object",
@@ -1593,6 +3041,14 @@
       "ProfileDto": {
         "type": "object",
         "properties": {
+          "identityStatus": {
+            "type": "string",
+            "enum": ["NOT_SUBMITTED", "PENDING", "VERIFIED", "REJECTED"]
+          },
+          "identityMode": {
+            "type": "string",
+            "enum": ["SANDBOX"]
+          },
           "id": {
             "type": "string"
           },
@@ -1610,7 +3066,15 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "displayName", "bio", "avatarUrl", "phoneVerified"]
+        "required": [
+          "identityStatus",
+          "identityMode",
+          "id",
+          "displayName",
+          "bio",
+          "avatarUrl",
+          "phoneVerified"
+        ]
       },
       "UpdateProfileDto": {
         "type": "object",
@@ -1686,6 +3150,28 @@
         },
         "required": ["status", "purgeAfter"]
       },
+      "PublicVehicleDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["MOTORBIKE", "CAR"]
+          },
+          "model": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "passengerCapacity": {
+            "type": "number"
+          }
+        },
+        "required": ["id", "type", "model", "color", "passengerCapacity"]
+      },
       "FileResponseDto": {
         "type": "object",
         "properties": {
@@ -1694,7 +3180,12 @@
           },
           "purpose": {
             "type": "string",
-            "enum": ["AVATAR", "VERIFICATION_SANDBOX"]
+            "enum": [
+              "AVATAR",
+              "VERIFICATION_SANDBOX",
+              "IDENTITY_SANDBOX",
+              "VEHICLE_DOCUMENT_SANDBOX"
+            ]
           },
           "status": {
             "type": "string"
@@ -1719,7 +3210,12 @@
         "properties": {
           "purpose": {
             "type": "string",
-            "enum": ["AVATAR", "VERIFICATION_SANDBOX"]
+            "enum": [
+              "AVATAR",
+              "VERIFICATION_SANDBOX",
+              "IDENTITY_SANDBOX",
+              "VEHICLE_DOCUMENT_SANDBOX"
+            ]
           },
           "contentType": {
             "type": "string",
@@ -1767,6 +3263,408 @@
           }
         },
         "required": ["url", "expiresAt"]
+      },
+      "WorkflowViewDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidenceFileIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["SANDBOX"]
+          },
+          "attempt": {
+            "type": "number"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "syntheticPlate": {
+            "type": "string"
+          },
+          "passengerCapacity": {
+            "type": "number"
+          },
+          "communityId": {
+            "type": "string"
+          },
+          "requestReason": {
+            "type": "string"
+          },
+          "cooldownUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "status", "version", "createdAt", "updatedAt", "evidenceFileIds"]
+      },
+      "VerificationViewDto": {
+        "type": "object",
+        "properties": {
+          "identityStatus": {
+            "type": "string",
+            "enum": ["NOT_SUBMITTED", "PENDING", "VERIFIED", "REJECTED"]
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["SANDBOX"]
+          },
+          "application": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WorkflowViewDto"
+              }
+            ]
+          }
+        },
+        "required": ["identityStatus", "mode", "application"]
+      },
+      "CreateCommandDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["commandId"]
+      },
+      "SubmitDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          },
+          "evidenceFileIds": {
+            "minItems": 1,
+            "maxItems": 3,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["commandId", "expectedVersion", "evidenceFileIds"]
+      },
+      "CommandDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": ["commandId", "expectedVersion"]
+      },
+      "AcceptedDto": {
+        "type": "object",
+        "properties": {
+          "accepted": {
+            "type": "boolean"
+          }
+        },
+        "required": ["accepted"]
+      },
+      "WorkflowPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowViewDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["items", "nextCursor"]
+      },
+      "VehicleDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["MOTORBIKE", "CAR"]
+          },
+          "model": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 80
+          },
+          "color": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 40
+          },
+          "syntheticPlate": {
+            "type": "string",
+            "example": "SYNTH-CAR-001"
+          },
+          "passengerCapacity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 8
+          }
+        },
+        "required": ["commandId", "type", "model", "color", "syntheticPlate", "passengerCapacity"]
+      },
+      "UpdateVehicleDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["MOTORBIKE", "CAR"]
+          },
+          "model": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 80
+          },
+          "color": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 40
+          },
+          "syntheticPlate": {
+            "type": "string",
+            "example": "SYNTH-CAR-001"
+          },
+          "passengerCapacity": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "commandId",
+          "type",
+          "model",
+          "color",
+          "syntheticPlate",
+          "passengerCapacity",
+          "expectedVersion"
+        ]
+      },
+      "MembershipDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          },
+          "requestReason": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "required": ["commandId", "expectedVersion", "requestReason"]
+      },
+      "DecisionDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          },
+          "action": {
+            "type": "string",
+            "enum": ["APPROVE", "REJECT", "REVOKE"]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 300
+          }
+        },
+        "required": ["commandId", "expectedVersion", "action", "reason"]
+      },
+      "CommunityDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "type": {
+            "type": "string",
+            "enum": ["SCHOOL", "COMPANY"]
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": ["commandId", "expectedVersion", "slug", "name", "type", "description"]
+      },
+      "EvidenceAccessDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 200
+          }
+        },
+        "required": ["reason"]
+      },
+      "EvidenceUrlDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["url", "expiresAt"]
+      },
+      "AuditItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "event": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "event", "createdAt"]
+      },
+      "AuditPageDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditItemDto"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["items", "nextCursor"]
+      },
+      "SandboxDto": {
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "number",
+            "minimum": 0
+          },
+          "scenario": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "PENDING", "EXPIRED", "TIMEOUT"]
+          }
+        },
+        "required": ["commandId", "expectedVersion", "scenario"]
       },
       "HealthResponseDto": {
         "type": "object",
