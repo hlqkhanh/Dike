@@ -42,13 +42,33 @@ export function Dashboard() {
     <div className="dashboard-grid">
       <Card>
         <StatusBadge status={session.user.phoneStatus === 'VERIFIED' ? 'ready' : 'warning'}>
-          {session.user.phoneStatus === 'VERIFIED' ? 'Đã xác minh' : 'Số điện thoại chưa xác minh'}
+          {session.user.phoneStatus === 'VERIFIED'
+            ? 'Số điện thoại đã xác minh'
+            : 'Số điện thoại chưa xác minh'}
         </StatusBadge>
         <h1 className="auth-title">Xin chào, {session.user.displayName}</h1>
         <p className="auth-copy">
-          Phiên hiện tại được bảo vệ bằng opaque token và có thể thu hồi ngay lập tức.
+          Quản lý hồ sơ, xác minh thử nghiệm, phương tiện và cộng đồng của bạn.
         </p>
         <dl className="session-meta">
+          <div>
+            <dt>Danh tính thử nghiệm</dt>
+            <dd>
+              {session.user.identityStatus === 'VERIFIED'
+                ? 'Đã xác minh thử nghiệm'
+                : session.user.identityStatus === 'PENDING'
+                  ? 'Đang xử lý'
+                  : session.user.identityStatus === 'REJECTED'
+                    ? 'Chưa được duyệt'
+                    : 'Chưa gửi hồ sơ'}
+            </dd>
+          </div>
+          <div>
+            <dt>Quyền chủ xe</dt>
+            <dd>
+              {session.user.roles.includes('APPROVED_DRIVER') ? 'Đã được cấp' : 'Chưa được cấp'}
+            </dd>
+          </div>
           <div>
             <dt>Quyền tài khoản</dt>
             <dd>{session.user.roles.join(', ')}</dd>
@@ -65,6 +85,20 @@ export function Dashboard() {
           </div>
         </dl>
         <div className="button-row">
+          <a className="secondary-link" href="/settings/verification">
+            Xác minh thử nghiệm
+          </a>
+          <a className="secondary-link" href="/settings/vehicles">
+            Phương tiện
+          </a>
+          <a className="secondary-link" href="/communities">
+            Cộng đồng
+          </a>
+          {session.user.roles.includes('ADMIN') && (
+            <a className="secondary-link" href="/admin">
+              Quản trị
+            </a>
+          )}
           <a className="secondary-link" href="/settings/profile">
             Hồ sơ và quyền riêng tư
           </a>

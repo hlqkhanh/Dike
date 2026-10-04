@@ -16,6 +16,7 @@
     "test": "corepack pnpm --filter \"./packages/**\" build && node scripts/run-workspaces.mjs test",
     "test:integration": "corepack pnpm --filter \"./packages/**\" build && node scripts/run-workspaces.mjs test:integration",
     "test:e2e:auth": "corepack pnpm --filter @dike/web test:e2e:auth",
+    "test:e2e:stage5-ui": "corepack pnpm --filter @dike/web test:e2e:stage5-ui",
     "lint": "eslint \"*.mjs\" scripts --max-warnings=0 && node scripts/run-workspaces.mjs lint",
     "typecheck": "node scripts/run-workspaces.mjs typecheck",
     "infra:up": "node scripts/infra.mjs up",

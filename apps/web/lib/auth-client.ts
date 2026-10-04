@@ -4,6 +4,24 @@ import type { AuthSessionView, DeviceSessionView } from '@dike/contracts';
 
 let refreshPromise: Promise<AuthSessionView> | undefined;
 
+export class ApiRequestError extends Error {
+  constructor(
+    code: string,
+    public readonly status: number,
+    public readonly retryAfter?: number,
+  ) {
+    super(code);
+  }
+}
+export async function responseError(response: Response): Promise<ApiRequestError> {
+  const retry = response.headers.get('retry-after');
+  return new ApiRequestError(
+    (await errorCode(response)) ?? 'REQUEST_FAILED',
+    response.status,
+    retry && /^\d+$/.test(retry) ? Number(retry) : undefined,
+  );
+}
+
 function csrfCookie(): string {
   const value = document.cookie
     .split('; ')
@@ -67,7 +85,7 @@ export async function authMutation<T>(
     await refreshSession();
     response = await perform();
   }
-  if (!response.ok) throw new Error((await errorCode(response)) ?? 'REQUEST_FAILED');
+  if (!response.ok) throw await responseError(response);
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
 }

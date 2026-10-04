@@ -210,10 +210,87 @@ h1 {
 }
 .button-row,
 .session-heading {
+  flex-wrap: wrap;
   align-items: center;
   display: flex;
   gap: 12px;
   justify-content: space-between;
+}
+
+.workflow-shell {
+  width: 100%;
+  max-width: 960px;
+  display: grid;
+  gap: 20px;
+}
+.workflow-nav,
+.workflow-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.workflow-nav {
+  border-bottom: 1px solid var(--dike-border);
+  padding-bottom: 20px;
+}
+.workflow-panel {
+  background: var(--dike-surface);
+  padding: 24px;
+  border: 1px solid var(--dike-border);
+  border-radius: var(--dike-radius-md);
+  overflow-wrap: anywhere;
+}
+.workflow-panel h2 {
+  margin-top: 0;
+}
+.workflow-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+.workflow-badge {
+  display: inline-block;
+  border-radius: 8px;
+  background: var(--dike-accent);
+  padding: 8px 12px;
+  font-weight: 700;
+}
+.workflow-check {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-block: 18px;
+}
+.workflow-check input {
+  width: 20px;
+  min-height: 20px;
+}
+.workflow-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 36px;
+  padding-left: 24px;
+}
+.workflow-shell label > input:not([type='checkbox']),
+.workflow-shell label > select,
+.workflow-shell label > textarea {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+.workflow-shell fieldset {
+  border: 1px solid var(--dike-border);
+  border-radius: 8px;
+  margin-block: 16px;
+}
+.workflow-shell button:focus-visible,
+.workflow-shell a:focus-visible,
+.workflow-shell input:focus-visible,
+.workflow-shell select:focus-visible,
+.workflow-shell textarea:focus-visible {
+  outline: 3px solid var(--dike-focus);
+  outline-offset: 3px;
 }
 .secondary-link {
   color: var(--dike-primary);

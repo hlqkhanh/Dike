@@ -1,5 +1,5 @@
 'use client';
-import { loadSession } from './auth-client';
+import { loadSession, responseError } from './auth-client';
 export async function readProfileResource<T>(url: string): Promise<T> {
   let response = await fetch(url, { cache: 'no-store' });
   if (response.status === 401) {
@@ -7,8 +7,7 @@ export async function readProfileResource<T>(url: string): Promise<T> {
     response = await fetch(url, { cache: 'no-store' });
   }
   if (!response.ok) {
-    const body = (await response.json()) as { error?: { code?: string } };
-    throw new Error(body.error?.code ?? 'REQUEST_FAILED');
+    throw await responseError(response);
   }
   return (await response.json()) as T;
 }

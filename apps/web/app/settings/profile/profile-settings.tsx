@@ -1,4 +1,5 @@
 'use client';
+import { uploadImage } from '../../../lib/file-upload';
 import {
   DEFAULT_PRIVACY,
   POLICY_VERSION,
@@ -6,7 +7,6 @@ import {
   type FileView,
   type PrivacySettings,
   type ProfileView,
-  type UploadView,
 } from '@dike/contracts';
 import { Button, Card } from '@dike/ui';
 import { useRouter } from 'next/navigation';
@@ -105,20 +105,7 @@ export function ProfileSettings({ sandbox }: { sandbox: boolean }) {
     }
     await act(
       async () => {
-        const upload = await authMutation<UploadView>('/api/files/uploads', 'POST', {
-          purpose,
-          contentType: file.type,
-          size: file.size,
-        });
-        const response = await fetch(upload.uploadUrl, {
-          method: 'PUT',
-          headers: { 'Content-Type': upload.contentType },
-          body: file,
-          credentials: 'omit',
-          referrerPolicy: 'no-referrer',
-        });
-        if (!response.ok) throw new Error('STORAGE_UNAVAILABLE');
-        await authMutation(`/api/files/${upload.fileId}/complete`, 'POST');
+        await uploadImage(file, purpose);
         setFile(null);
         await reloadFiles();
       },

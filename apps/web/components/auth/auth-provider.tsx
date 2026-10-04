@@ -19,7 +19,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const query = useQuery({ queryKey: ['auth-session'], queryFn: loadSession, retry: false });
   useEffect(() => {
     const channel = new BroadcastChannel('dike-auth');
-    channel.onmessage = () => void queryClient.invalidateQueries({ queryKey: ['auth-session'] });
+    channel.onmessage = () => {
+      void queryClient.invalidateQueries({ queryKey: ['auth-session'] });
+      void queryClient.invalidateQueries({ queryKey: ['workflow'] });
+    };
     return () => channel.close();
   }, [queryClient]);
   return (

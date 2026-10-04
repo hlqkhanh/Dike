@@ -9,7 +9,8 @@
     "lint": "eslint app components lib test --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --environment jsdom --exclude e2e/**",
-    "test:e2e:auth": "playwright test --config playwright.config.ts"
+    "test:e2e:auth": "playwright test --config playwright.config.ts",
+    "test:e2e:stage5-ui": "playwright test --config playwright.stage5.config.ts"
   },
   "dependencies": {
     "@dike/api-client": "workspace:*",

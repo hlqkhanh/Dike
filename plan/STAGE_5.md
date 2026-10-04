@@ -1,6 +1,6 @@
 # Stage 5 — Kế hoạch local: eKYC sandbox, phương tiện, cộng đồng và UI admin
 
-Backend đã có triển khai local trên nhánh `codex/stage-5-backend`; frontend chưa triển khai. Xem [runbook backend](../docs/operations/stage5-backend.md) để biết API, lệnh seed, khác biệt contract và phần nghiệm thu còn chờ Docker. Mục tiêu UI bên dưới vẫn là kế hoạch tiếp theo.
+Backend đã có triển khai local. Frontend FE-00–FE-04 đã được triển khai trên nhánh `codex/stage-5-frontend`, gồm BFF, màn hình thành viên và admin, upload dùng chung, xử lý version/idempotency và kiểm thử UI giả lập. Xem [runbook backend](../docs/operations/stage5-backend.md) và [runbook frontend](../docs/operations/stage5-frontend.md). Nghiệm thu tích hợp/E2E với dịch vụ thật vẫn chờ Docker; chưa đóng DoD toàn bộ Stage 5. Các phần phân tích nền bên dưới ghi lại thời điểm lập kế hoạch, không phải trạng thái source hiện tại.
 
 ## 1. Mục tiêu và phạm vi
 

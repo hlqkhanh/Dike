@@ -5,6 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../components/auth/auth-provider';
 import { profileError, readProfileResource } from '../../lib/profile-client';
+import { PublicVehicles } from '../../components/workflows/public-vehicles';
 export function People() {
   const router = useRouter();
   const { session, loading } = useAuth();
@@ -89,6 +90,7 @@ export function People() {
             />
           ) : null}
           <p>{selected.bio || 'Chưa có giới thiệu.'}</p>
+          <PublicVehicles key={selected.id} userId={selected.id} />
           <p>
             {selected.phoneVerified ? 'Số điện thoại đã xác minh' : 'Số điện thoại chưa xác minh'}
           </p>
