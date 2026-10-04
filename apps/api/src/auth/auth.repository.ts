@@ -78,7 +78,7 @@ export class AuthRepository {
         { session },
       );
       await this.users.updateOne(
-        { _id: existing.userId, status: 'ACTIVE' },
+        { _id: existing.userId, status: 'ACTIVE', profileEdited: { $ne: true } },
         {
           $set: {
             displayName: identity.displayName,
@@ -119,6 +119,9 @@ export class AuthRepository {
       displayName: identity.displayName,
       avatarUrl: identity.avatarUrl,
       phoneStatus: 'NONE',
+      bio: '',
+      profileVersion: 0,
+      privacy: { profileVisibility: 'MEMBERS', discoverable: false, directMessages: 'NONE' },
       roles: ['MEMBER'],
       roleVersion: 0,
       phoneVersion: 0,

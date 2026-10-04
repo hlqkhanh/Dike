@@ -1,10 +1,10 @@
 # Dike
 
-Dike is a greenfield ride-sharing platform being designed for a controlled production pilot in Vietnam. The repository contains the Stage 3 implementation: a responsive Next.js BFF, modular NestJS API, Google Authorization Code + PKCE authentication, opaque device sessions, BullMQ worker, generated API client and local MongoDB/Redis/MinIO infrastructure.
+Dike is a greenfield ride-sharing platform being designed for a controlled production pilot in Vietnam. The repository contains the Stage 4 local implementation: a responsive Next.js BFF, modular NestJS API, Google Authorization Code + PKCE authentication, opaque device sessions, BullMQ worker, generated API client and local MongoDB/Redis/MinIO infrastructure.
 
 ## Current status
 
-- Stage: **3 — Phone OTP and account roles (implementation; integration/E2E acceptance pending)**
+- Stage: **4 — Profiles, privacy and files (local implementation; integration/E2E acceptance pending)**
 - Production ready: **No**
 - Existing legacy application/data: **None**
 - Target clients: responsive Next.js web first, React Native mobile later
@@ -85,3 +85,5 @@ corepack pnpm run ci
 ## Rights
 
 Copyright © 2026 Dike contributors. All rights reserved. This public repository is available for inspection only; no license to copy, modify, distribute, sublicense, or use the code commercially is granted. See [RIGHTS.md](RIGHTS.md).
+
+Stage 4 local setup and acceptance: [profiles and files runbook](docs/operations/profiles-files.md).

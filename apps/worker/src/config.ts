@@ -1,3 +1,4 @@
+import { storageConfigSchema, type StorageConfig } from '@dike/storage';
 import { parseInteger } from '@dike/config';
 import { z } from 'zod';
 
@@ -9,6 +10,8 @@ const baseSchema = z.object({
 });
 
 export interface WorkerConfig extends z.infer<typeof baseSchema> {
+  storage: StorageConfig;
+  retentionEnabled: boolean;
   concurrency: number;
   attempts: number;
   pollIntervalMs: number;
@@ -19,6 +22,10 @@ export function loadWorkerConfig(environment: NodeJS.ProcessEnv = process.env): 
   if (!parsed.success) throw new Error('Invalid worker environment configuration');
   return {
     ...parsed.data,
+    storage: storageConfigSchema.parse(environment),
+    retentionEnabled:
+      ['local', 'test'].includes(parsed.data.APP_ENV) ||
+      environment.RETENTION_POLICY_APPROVED === 'true',
     concurrency: parseInteger(environment.WORKER_CONCURRENCY, 2, { min: 1, max: 20 }),
     attempts: parseInteger(environment.WORKER_JOB_ATTEMPTS, 5, { min: 1, max: 10 }),
     pollIntervalMs: parseInteger(environment.WORKER_POLL_INTERVAL_MS, 1_000, {

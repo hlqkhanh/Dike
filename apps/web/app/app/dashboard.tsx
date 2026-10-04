@@ -65,6 +65,12 @@ export function Dashboard() {
           </div>
         </dl>
         <div className="button-row">
+          <a className="secondary-link" href="/settings/profile">
+            Hồ sơ và quyền riêng tư
+          </a>
+          <a className="secondary-link" href="/people">
+            Tìm thành viên
+          </a>
           <a className="secondary-link" href="/onboarding/phone">
             Cập nhật số điện thoại
           </a>

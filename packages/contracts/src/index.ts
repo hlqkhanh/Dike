@@ -149,3 +149,61 @@ export const foundationSampleJobSchema = z.object({
 });
 
 export type FoundationSampleJob = z.infer<typeof foundationSampleJobSchema>;
+
+export const POLICY_VERSION = '2026-10-04-draft' as const;
+export const privacySettingsSchema = z.object({
+  profileVisibility: z.enum(['MEMBERS', 'PRIVATE']),
+  discoverable: z.boolean(),
+  directMessages: z.enum(['NONE', 'FRIENDS', 'MEMBERS']),
+});
+export type PrivacySettings = z.infer<typeof privacySettingsSchema>;
+export const DEFAULT_PRIVACY: PrivacySettings = {
+  profileVisibility: 'MEMBERS',
+  discoverable: false,
+  directMessages: 'NONE',
+};
+export interface ProfileView {
+  id: string;
+  displayName: string;
+  bio: string;
+  avatarUrl: string | null;
+  phoneVerified: boolean;
+}
+export interface ConsentView {
+  policyVersion: string;
+  termsAccepted: boolean;
+  privacyAccepted: boolean;
+  analytics: boolean;
+}
+export interface FileView {
+  id: string;
+  purpose: 'AVATAR' | 'VERIFICATION_SANDBOX';
+  status: string;
+  createdAt: string;
+  expiresAt: string;
+  publicUrl: string | null;
+}
+export interface UploadView {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+  size: number;
+  expiresAt: string;
+}
+export interface FileRecord<Id> {
+  _id: Id;
+  ownerId: Id;
+  purpose: 'AVATAR' | 'VERIFICATION_SANDBOX';
+  status: 'PENDING' | 'PROCESSING' | 'READY' | 'DELETE_PENDING' | 'DELETED';
+  uploadKey: string;
+  finalKey: string;
+  contentType: string;
+  size: number;
+  createdAt: Date;
+  expiresAt: Date;
+  uploadExpiresAt: Date;
+  deleteAfter?: Date;
+  lockToken?: string;
+  lockedUntil?: Date;
+  finalizedAt?: Date;
+}

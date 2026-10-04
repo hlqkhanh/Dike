@@ -122,6 +122,50 @@ export const migrations: Migration[] = [
         .updateOne({ _id: 'global' }, { $setOnInsert: { revision: 0 } }, { upsert: true });
     },
   },
+  {
+    id: '20261004-004-profiles-files-consents',
+    description: 'Profile privacy defaults, file lifecycle and consent history indexes',
+    signature: 'profiles-v1-files-v1-consents-v1-retention-v1',
+    async apply(connection) {
+      await connection.collection('users').updateMany(
+        { privacy: { $exists: false } },
+        {
+          $set: {
+            privacy: {
+              profileVisibility: 'MEMBERS',
+              discoverable: false,
+              directMessages: 'NONE',
+            },
+          },
+        },
+      );
+      await connection
+        .collection('users')
+        .updateMany(
+          { profileVersion: { $exists: false } },
+          { $set: { profileVersion: 0, bio: '' } },
+        );
+      await connection.collection('users').createIndexes([
+        {
+          key: { status: 1, 'privacy.discoverable': 1, 'privacy.profileVisibility': 1, _id: 1 },
+          name: 'profile_discovery',
+        },
+        { key: { status: 1, deletionDueAt: 1 }, name: 'account_deletion_due' },
+      ]);
+      await connection.collection('files').createIndexes([
+        { key: { ownerId: 1, status: 1, createdAt: -1 }, name: 'file_owner_status' },
+        { key: { status: 1, expiresAt: 1, deleteAfter: 1 }, name: 'file_cleanup' },
+        { key: { uploadKey: 1 }, name: 'file_upload_key_unique', unique: true },
+        { key: { finalKey: 1 }, name: 'file_final_key_unique', unique: true },
+      ]);
+      await connection
+        .collection('consents')
+        .createIndex(
+          { userId: 1, policyVersion: 1, createdAt: -1 },
+          { name: 'consent_user_version' },
+        );
+    },
+  },
 ];
 
 function checksum(migration: Migration): string {
