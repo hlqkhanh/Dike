@@ -195,7 +195,7 @@ export function PhoneForm() {
                 value={code}
                 onChange={(event) => setCode(event.target.value)}
                 required
-                aria-describedby="otp-help"
+                aria-describedby={error ? 'otp-help phone-onboarding-error' : 'otp-help'}
               />
               <p id="otp-help" role="status">
                 {expired
@@ -214,7 +214,7 @@ export function PhoneForm() {
         </section>
       ) : null}
       {error ? (
-        <p className="form-error" role="alert">
+        <p id="phone-onboarding-error" className="form-error" role="alert">
           {error}
         </p>
       ) : null}
