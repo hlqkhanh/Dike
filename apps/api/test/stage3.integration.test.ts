@@ -138,7 +138,7 @@ integration('Stage 3 real MongoDB and Redis', () => {
       request,
     );
     expect(result).toMatchObject({
-      user: { phoneStatus: 'VERIFIED', roles: ['MEMBER', 'VERIFIED_MEMBER'] },
+      user: { phoneStatus: 'VERIFIED', roles: ['MEMBER'] },
       onboarding: { nextAction: 'NONE' },
     });
     await expect(

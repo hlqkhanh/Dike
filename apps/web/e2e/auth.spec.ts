@@ -86,7 +86,7 @@ test('completes mock OIDC login and verified-phone onboarding', async ({ page })
   await signIn(page, /Alice Dike/);
   await ensurePhone(page, testPhone(1));
   await expect(page.locator('.dike-status[data-status="ready"]')).toContainText('Đã xác minh');
-  await expect(page.getByText('MEMBER, VERIFIED_MEMBER', { exact: true })).toBeVisible();
+  await expect(page.getByText('MEMBER', { exact: true })).toBeVisible();
   await expect(page.evaluate(() => localStorage.length)).resolves.toBe(0);
   await expect(page.evaluate(() => sessionStorage.length)).resolves.toBe(0);
 

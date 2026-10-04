@@ -13,6 +13,7 @@ import type { Logger } from 'pino';
 import { RequestContext } from './request-context.js';
 import { API_LOGGER } from './tokens.js';
 import { ApiError } from './api-error.js';
+import { WorkflowError } from '@dike/workflows';
 
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
@@ -23,6 +24,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
   ) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
+    if (exception instanceof WorkflowError)
+      exception = new ApiError(exception.code, exception.message, exception.status);
     const response = host.switchToHttp().getResponse<Response>();
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;

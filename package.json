@@ -38,7 +38,8 @@
     "auth:role:bootstrap-admin": "corepack pnpm --filter @dike/api auth:role:bootstrap-admin",
     "auth:role:grant": "corepack pnpm --filter @dike/api auth:role:grant",
     "auth:role:revoke": "corepack pnpm --filter @dike/api auth:role:revoke",
-    "storage:local": "corepack pnpm --filter @dike/storage build && node scripts/storage-local.mjs"
+    "storage:local": "corepack pnpm --filter @dike/storage build && node scripts/storage-local.mjs",
+    "db:seed:stage5": "corepack pnpm --filter \"./packages/**\" build && corepack pnpm --filter @dike/api db:seed:stage5"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx}": [

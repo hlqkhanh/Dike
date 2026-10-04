@@ -30,6 +30,8 @@ describe('authorization guard in an internal test module', () => {
       displayName: 'Test',
       avatarUrl: null,
       phoneStatus: 'VERIFIED',
+      identityStatus: 'VERIFIED',
+      identityMode: 'SANDBOX',
       roles: ['MEMBER', 'ADMIN'],
       roleVersion: 1,
       phoneVersion: 1,
@@ -76,6 +78,12 @@ describe('authorization guard in an internal test module', () => {
       .set('authorization', 'Bearer opaque-test-session')
       .expect(403);
     current.phoneStatus = 'VERIFIED';
+    current.identityStatus = 'REJECTED';
+    await request(server)
+      .get('/internal-test-policy')
+      .set('authorization', 'Bearer opaque-test-session')
+      .expect(403);
+    current.identityStatus = 'VERIFIED';
     current.status = 'SUSPENDED';
     await request(server)
       .get('/internal-test-policy')

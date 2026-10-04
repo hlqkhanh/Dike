@@ -27,6 +27,8 @@ The canonical feature details and acceptance rules remain in [plan/PLAN.md](../p
 
 ## Labels
 
+Stage 5 local implementation breakdown: [backend, frontend, dependencies and acceptance](../plan/STAGE_5.md). This is a proposed implementation plan; runtime acceptance remains a separate gate.
+
 - Type: `type:feature`, `type:bug`, `type:security`, `type:tech-debt`
 - Area: `area:web`, `area:api`, `area:worker`, `area:mobile`, `area:infra`
 - Priority: `priority:p0`, `priority:p1`, `priority:p2`, `priority:p3`

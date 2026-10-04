@@ -124,8 +124,39 @@ export class RetentionService {
             { session },
           );
           if (!result.modifiedCount) return;
-          for (const name of ['auth_identities', 'sessions', 'consents', 'phone_verifications'])
+          const applications = await this.mongo
+            .collection('verification_applications')
+            .find({ userId: user._id }, { session })
+            .toArray();
+          const applicationIds = applications.map((item) => item._id);
+          await this.mongo
+            .collection('webhook_events')
+            .deleteMany({ applicationId: { $in: applicationIds } }, { session });
+          await this.mongo
+            .collection('outbox_events')
+            .deleteMany(
+              { aggregateType: 'verification', aggregateId: { $in: applicationIds.map(String) } },
+              { session },
+            );
+          await this.mongo
+            .collection('workflow_commands')
+            .deleteMany(
+              { $or: [{ actorId: user._id }, { 'result.userId': String(user._id) }] },
+              { session },
+            );
+          for (const name of [
+            'auth_identities',
+            'sessions',
+            'consents',
+            'phone_verifications',
+            'verification_applications',
+            'vehicles',
+            'community_memberships',
+          ])
             await this.mongo.collection(name).deleteMany({ userId: user._id }, { session });
+          await this.mongo
+            .collection('audit_logs')
+            .updateMany({ actorId: user._id }, { $unset: { actorId: '' } }, { session });
           await this.mongo
             .collection('audit_logs')
             .updateMany(

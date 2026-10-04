@@ -8,7 +8,8 @@ import mongoose from 'mongoose';
 import { loadWorkerConfig } from './config.js';
 import { createWorkerLogger } from './logger.js';
 import { OutboxDispatcher } from './outbox-dispatcher.js';
-import { createSampleHandler } from './sample-handler.js';
+import { WorkflowStore } from '@dike/workflows';
+import { createWorkflowHandler } from './workflow-handler.js';
 
 const config = loadWorkerConfig();
 const logger = createWorkerLogger(config);
@@ -21,7 +22,9 @@ const mongo = await mongoose
 const queueConnection = new Redis(config.REDIS_URL, { maxRetriesPerRequest: null });
 const workerConnection = new Redis(config.REDIS_URL, { maxRetriesPerRequest: null });
 const queue = new Queue(FOUNDATION_QUEUE, { connection: queueConnection });
-const worker = new Worker(FOUNDATION_QUEUE, createSampleHandler(mongo), {
+const storage = new ObjectStorage(config.storage);
+const workflows = new WorkflowStore(mongo, storage);
+const worker = new Worker(FOUNDATION_QUEUE, createWorkflowHandler(mongo, workflows, config), {
   connection: workerConnection,
   concurrency: config.concurrency,
 });
@@ -53,13 +56,14 @@ void dispatcher.run().catch((error: unknown) => {
   process.exitCode = 1;
 });
 
-const storage = new ObjectStorage(config.storage);
 const retention = new RetentionService(mongo, storage);
 let retentionWork: Promise<void> | undefined;
 const runRetention = () => {
   if (!config.retentionEnabled || retentionWork) return;
-  retentionWork = retention
-    .sweep()
+  retentionWork = (async () => {
+    if (config.EKYC_PROVIDER === 'mock') await workflows.expire();
+    await retention.sweep();
+  })()
     .catch((error: unknown) =>
       logger.warn(
         { errorType: error instanceof Error ? error.name : 'UnknownError' },

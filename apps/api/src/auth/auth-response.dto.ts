@@ -11,6 +11,9 @@ export class DeviceSummaryDto {
 }
 
 export class AuthUserDto {
+  @ApiProperty({ enum: ['NOT_SUBMITTED', 'PENDING', 'VERIFIED', 'REJECTED'] })
+  identityStatus!: string;
+  @ApiProperty({ enum: ['SANDBOX'] }) identityMode!: string;
   @ApiProperty({ enum: accountRoleSchema.options, isArray: true })
   roles!: string[];
   @ApiProperty({ type: String })

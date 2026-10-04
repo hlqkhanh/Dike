@@ -54,6 +54,8 @@ export interface AuthenticatedSessionView {
     displayName: string;
     avatarUrl: string | null;
     phoneStatus: PhoneStatus;
+    identityStatus?: 'NOT_SUBMITTED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+    identityMode?: 'SANDBOX';
     maskedPhone: string | null;
     roles: AccountRole[];
   };
@@ -168,6 +170,8 @@ export interface ProfileView {
   bio: string;
   avatarUrl: string | null;
   phoneVerified: boolean;
+  identityStatus?: 'NOT_SUBMITTED' | 'PENDING' | 'VERIFIED' | 'REJECTED';
+  identityMode?: 'SANDBOX';
 }
 export interface ConsentView {
   policyVersion: string;
@@ -177,7 +181,7 @@ export interface ConsentView {
 }
 export interface FileView {
   id: string;
-  purpose: 'AVATAR' | 'VERIFICATION_SANDBOX';
+  purpose: 'AVATAR' | 'VERIFICATION_SANDBOX' | 'IDENTITY_SANDBOX' | 'VEHICLE_DOCUMENT_SANDBOX';
   status: string;
   createdAt: string;
   expiresAt: string;
@@ -193,7 +197,10 @@ export interface UploadView {
 export interface FileRecord<Id> {
   _id: Id;
   ownerId: Id;
-  purpose: 'AVATAR' | 'VERIFICATION_SANDBOX';
+  purpose: FileView['purpose'];
+  resourceId?: Id;
+  resourceType?: 'verification' | 'vehicle';
+  evidenceLocked?: boolean;
   status: 'PENDING' | 'PROCESSING' | 'READY' | 'DELETE_PENDING' | 'DELETED';
   uploadKey: string;
   finalKey: string;

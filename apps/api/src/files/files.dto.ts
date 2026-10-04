@@ -2,9 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsInt, Matches, Max, Min } from 'class-validator';
 import { IMAGE_TYPES, MAX_UPLOAD_BYTES } from '@dike/storage';
 export class CreateUploadDto {
-  @ApiProperty({ enum: ['AVATAR', 'VERIFICATION_SANDBOX'] })
-  @IsIn(['AVATAR', 'VERIFICATION_SANDBOX'])
-  purpose!: 'AVATAR' | 'VERIFICATION_SANDBOX';
+  @ApiProperty({
+    enum: ['AVATAR', 'VERIFICATION_SANDBOX', 'IDENTITY_SANDBOX', 'VEHICLE_DOCUMENT_SANDBOX'],
+  })
+  @IsIn(['AVATAR', 'VERIFICATION_SANDBOX', 'IDENTITY_SANDBOX', 'VEHICLE_DOCUMENT_SANDBOX'])
+  purpose!: 'AVATAR' | 'VERIFICATION_SANDBOX' | 'IDENTITY_SANDBOX' | 'VEHICLE_DOCUMENT_SANDBOX';
   @ApiProperty({ enum: IMAGE_TYPES }) @IsIn(IMAGE_TYPES) contentType!: string;
   @ApiProperty({ type: Number, minimum: 1, maximum: MAX_UPLOAD_BYTES })
   @IsInt()
@@ -24,7 +26,10 @@ export class UploadResponseDto {
 }
 export class FileResponseDto {
   @ApiProperty({ type: String }) id!: string;
-  @ApiProperty({ enum: ['AVATAR', 'VERIFICATION_SANDBOX'] }) purpose!: string;
+  @ApiProperty({
+    enum: ['AVATAR', 'VERIFICATION_SANDBOX', 'IDENTITY_SANDBOX', 'VEHICLE_DOCUMENT_SANDBOX'],
+  })
+  purpose!: string;
   @ApiProperty({ type: String }) status!: string;
   @ApiProperty({ type: String, format: 'date-time' }) createdAt!: string;
   @ApiProperty({ type: String, format: 'date-time' }) expiresAt!: string;

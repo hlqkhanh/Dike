@@ -22,6 +22,8 @@ export function projectProfile(user: UserDocument): ProfileView {
     bio: user.bio ?? '',
     avatarUrl: user.avatarUrl,
     phoneVerified: user.phoneStatus === 'VERIFIED',
+    identityStatus: user.identityStatus ?? 'NOT_SUBMITTED',
+    identityMode: 'SANDBOX',
   };
 }
 export function literalNameQuery(query: string): string | null {

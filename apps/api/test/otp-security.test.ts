@@ -76,7 +76,8 @@ describe('OTP and authorization security', () => {
     expect(effectiveRoles({ ...user, roles: [...user.roles] })).toEqual(['MEMBER']);
     const verified = effectiveRoles({ ...user, phoneStatus: 'VERIFIED', roles: [...user.roles] });
     expect(verified).toContain('ADMIN');
-    expect(satisfiesRoles(verified, { allOf: ['MODERATOR', 'VERIFIED_MEMBER'] })).toBe(true);
+    expect(satisfiesRoles(verified, { allOf: ['MODERATOR', 'VERIFIED_MEMBER'] })).toBe(false);
+    expect(verified).not.toContain('APPROVED_DRIVER');
     expect(satisfiesRoles(['MEMBER'], { anyOf: ['ADMIN', 'MODERATOR'] })).toBe(false);
     expect(satisfiesRoles(['ADMIN'], { allOf: ['APPROVED_DRIVER'] })).toBe(false);
     expect(

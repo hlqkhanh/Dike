@@ -23,7 +23,7 @@ export function ensureLocalEnvironment() {
     );
     if (additions.length > 0) {
       appendFileSync(localEnvPath, `\n${additions.join('\n')}\n`, { encoding: 'utf8' });
-      console.log('[env] Added missing Stage 3 local-only settings to .env.local.');
+      console.log('[env] Added missing local-only settings to .env.local.');
     }
     return localEnvPath;
   }
@@ -61,6 +61,9 @@ export function ensureLocalEnvironment() {
 function stageTwoEnvironment() {
   const keyring = (prefix) => JSON.stringify({ local: `${prefix}${secret(32)}` });
   return [
+    'EKYC_PROVIDER=mock',
+    `EKYC_WEBHOOK_SECRET=${secret(32)}`,
+    'EKYC_CALLBACK_URL=http://127.0.0.1:3001/api/v1/webhooks/ekyc/mock',
     'S3_PUBLIC_BASE_URL=http://127.0.0.1:9000/dike-local-public',
     'RETENTION_POLICY_APPROVED=false',
     'AUTH_PROVIDER=mock',
