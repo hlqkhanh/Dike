@@ -33,7 +33,8 @@ describe('authentication cryptography', () => {
 
   it('detects ciphertext tampering', () => {
     const value = crypto.encrypt('alice@dike.invalid', 'identity:one:email');
-    const tampered = { ...value, ciphertext: `${value.ciphertext.slice(0, -1)}A` };
+    const replacement = value.ciphertext.startsWith('A') ? 'B' : 'A';
+    const tampered = { ...value, ciphertext: `${replacement}${value.ciphertext.slice(1)}` };
     expect(() => crypto.decrypt(tampered, 'identity:one:email')).toThrow();
   });
 
