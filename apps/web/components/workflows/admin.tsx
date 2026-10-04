@@ -76,6 +76,12 @@ export function ReviewQueue({ kind }: { kind: ReviewKind }) {
     <>
       <a href="/admin">Quản trị</a>
       <h1 className="auth-title">{titles[kind]}</h1>
+      {kind === 'verifications' && (
+        <p>
+          Hồ sơ mới nằm ở trạng thái “Chờ kết quả thử nghiệm”. Chọn trạng thái này, mở hồ sơ và chạy
+          tình huống “Đạt → chờ admin” trong công cụ local trước khi xét duyệt.
+        </p>
+      )}
       <label className="auth-form">
         Trạng thái
         <select
@@ -321,6 +327,10 @@ function EvidenceAccess({ kind, item }: { kind: 'verifications' | 'vehicles'; it
   return (
     <div className="auth-form">
       <h2>Minh chứng riêng tư</h2>
+      <p>
+        Nhập lý do ít nhất 3 ký tự, bấm mở ảnh để cấp quyền, rồi bấm liên kết tải ảnh xuất hiện bên
+        dưới. Trình duyệt sẽ tải ảnh về máy để bạn xem.
+      </p>
       <label>
         Lý do truy cập ảnh
         <textarea
@@ -344,7 +354,7 @@ function EvidenceAccess({ kind, item }: { kind: 'verifications' | 'vehicles'; it
       {link && (
         <p>
           <a href={link.url} target="_blank" rel="noreferrer noopener">
-            Xem ảnh trong tab mới
+            Tải ảnh minh chứng
           </a>{' '}
           · Liên kết hết hạn lúc {new Date(link.expiresAt).toLocaleTimeString('vi-VN')}. Bấm mở ảnh
           để cấp lại khi hết hạn.

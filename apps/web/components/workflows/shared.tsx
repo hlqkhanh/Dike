@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@dike/ui';
@@ -183,7 +184,11 @@ export function EvidenceUpload({
         />
       </label>
       {busy && <p role="status">Đang tải và kiểm tra ảnh…</p>}
-      {error && <p role="alert">{error} Chọn lại ảnh để tải bằng liên kết mới.</p>}
+      {error && (
+        <p role="alert">
+          {error} <Link href="/settings/profile">Quản lý file trong hồ sơ</Link>
+        </p>
+      )}
       <ul>
         {value.map((id, index) => (
           <li key={id}>

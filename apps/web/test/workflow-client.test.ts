@@ -22,6 +22,13 @@ it('shows rate limit delay and stale-version recovery in Vietnamese', () => {
   expect(workflowError(new ApiRequestError('RATE_LIMITED', 429, 45))).toContain('45 giây');
   expect(workflowError(new Error('VERSION_CONFLICT'))).toContain('tải lại');
 });
+it('explains file quota without incorrectly asking the user to wait', () => {
+  const message = workflowError(new ApiRequestError('FILE_QUOTA_EXCEEDED', 429));
+  expect(message).toContain('20 file');
+  expect(message).toContain('xóa');
+  expect(message).not.toContain('60 giây');
+  expect(message).not.toContain('thao tác quá nhanh');
+});
 it('rejects unsupported or oversized images before allocating an upload', async () => {
   const fetch = vi.fn();
   vi.stubGlobal('fetch', fetch);

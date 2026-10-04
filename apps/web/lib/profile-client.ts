@@ -16,7 +16,8 @@ export const profileMessages: Record<string, string> = {
     'Vui lòng đọc và chấp nhận điều khoản, thông báo quyền riêng tư trước khi tải ảnh.',
   FILE_INVALID: 'Ảnh không hợp lệ. Chọn JPEG, PNG hoặc WebP tối đa 5 MiB, không quá 16 megapixel.',
   FILE_NOT_READY: 'File đã hết hạn hoặc đang được xử lý. Hãy chọn và tải lại ảnh.',
-  FILE_QUOTA_EXCEEDED: 'Đã đạt giới hạn file. Hãy xóa các file không dùng.',
+  FILE_QUOTA_EXCEEDED:
+    'Tài khoản đã đạt giới hạn 20 file. Vào Hồ sơ để xóa các file không dùng rồi tải lại. Chờ thêm không giải quyết được giới hạn này.',
   ROLE_LAST_ADMIN: 'Cần có quản trị viên đã xác minh khác trước khi xóa tài khoản này.',
   PROFILE_NOT_FOUND: 'Không tìm thấy hồ sơ hoặc bạn không có quyền xem.',
   RETENTION_NOT_APPROVED: 'Chức năng xóa tài khoản chưa được bật trong môi trường này.',

@@ -51,6 +51,13 @@ export function Verification() {
       {query.data && (
         <section className="workflow-panel">
           {item ? <RecordSummary item={item} /> : <p>Bạn chưa gửi hồ sơ xác minh.</p>}
+          {item?.status === 'PROVIDER_PENDING' && (
+            <p role="status">
+              Đang chờ quản trị viên chạy tình huống xác minh trong công cụ thử nghiệm local. Sau
+              khi có kết quả đạt, quản trị viên cần duyệt danh tính trước khi bạn có thể gửi duyệt
+              xe.
+            </p>
+          )}
           {(!item || ['REJECTED', 'REVOKED', 'EXPIRED', 'CANCELLED'].includes(item.status)) && (
             <Button
               disabled={!phone}
@@ -265,9 +272,18 @@ export function VehicleDetail({ id }: { id: string }) {
   const command = useCommand();
   const [files, setFiles] = useState<string[]>([]);
   const [confirm, setConfirm] = useState(false);
-  const { session } = useAuth();
+  const { session, refresh } = useAuth();
   const item = query.data;
-  const eligible = session?.authenticated && session.user.roles.includes('VERIFIED_MEMBER');
+  const hasVerifiedPhone = session?.authenticated && session.user.phoneStatus === 'VERIFIED';
+  const hasVerifiedIdentity =
+    session?.authenticated &&
+    session.user.identityStatus === 'VERIFIED' &&
+    session.user.roles.includes('VERIFIED_MEMBER');
+  const eligible = hasVerifiedPhone && hasVerifiedIdentity;
+  const requirements = [
+    !hasVerifiedPhone && 'xác minh số điện thoại',
+    !hasVerifiedIdentity && 'xác minh danh tính thử nghiệm',
+  ].filter(Boolean);
   return (
     <>
       <h1 className="auth-title">Chi tiết phương tiện</h1>
@@ -294,10 +310,18 @@ export function VehicleDetail({ id }: { id: string }) {
             <section className="workflow-panel">
               <h2>Gửi duyệt xe</h2>
               {!eligible && (
-                <p>
-                  Cần <a href="/settings/verification">xác minh danh tính thử nghiệm</a> và điện
-                  thoại trước khi gửi.
-                </p>
+                <div role="alert">
+                  <p>
+                    Cần hoàn tất {requirements.join(' và ')} trước khi gửi. Nếu quản trị viên vừa
+                    duyệt, hãy cập nhật trạng thái rồi thử lại.
+                  </p>
+                  <Button type="button" onClick={() => void refresh()}>
+                    Cập nhật trạng thái
+                  </Button>
+                  <p>
+                    <a href="/settings/verification">Mở trang xác minh</a>
+                  </p>
+                </div>
               )}
               <EvidenceUpload
                 purpose="VEHICLE_DOCUMENT_SANDBOX"

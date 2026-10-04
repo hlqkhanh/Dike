@@ -26,7 +26,7 @@ export const pending = (item?: Workflow | null) =>
 export function workflowError(error: unknown): string {
   if (error instanceof Error && error.message === 'MEMBERSHIP_COOLDOWN')
     return 'Chưa hết thời gian chờ để xin gia nhập lại. Xem thời điểm được xin lại trong trạng thái thành viên.';
-  if (error instanceof ApiRequestError && error.status === 429)
+  if (error instanceof ApiRequestError && error.message === 'RATE_LIMITED')
     return `Bạn thao tác quá nhanh. Hãy thử lại sau ${error.retryAfter ?? 60} giây.`;
   if (error instanceof ApiRequestError && error.status === 401)
     return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
