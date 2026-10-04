@@ -11,6 +11,8 @@ export function Dashboard() {
   const router = useRouter();
   const { session, loading } = useAuth();
   const [busy, setBusy] = useState(false);
+  const requiresPhone =
+    session?.authenticated === true && session.onboarding.nextAction === 'PHONE_REQUIRED';
 
   useEffect(() => {
     if (loading) return;
@@ -30,8 +32,14 @@ export function Dashboard() {
     }
   }
 
-  if (loading || !session?.authenticated)
-    return <p role="status">Đang kiểm tra phiên đăng nhập…</p>;
+  if (loading || !session?.authenticated || requiresPhone)
+    return (
+      <p role="status">
+        {requiresPhone
+          ? 'Đang chuyển đến bước thêm số điện thoại…'
+          : 'Đang kiểm tra phiên đăng nhập…'}
+      </p>
+    );
   return (
     <div className="dashboard-grid">
       <Card>

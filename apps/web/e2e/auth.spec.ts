@@ -10,10 +10,16 @@ async function signIn(page: import('@playwright/test').Page, account: RegExp) {
 }
 
 async function ensurePhone(page: import('@playwright/test').Page) {
-  if (page.url().endsWith('/app')) return;
-  await page.getByLabel('Số điện thoại Việt Nam').fill('0901234567');
+  const phoneInput = page.getByLabel('Số điện thoại Việt Nam');
+  const dashboardHeading = page.getByRole('heading', { name: /Xin chào/ });
+
+  await expect(phoneInput.or(dashboardHeading)).toBeVisible();
+  if (await dashboardHeading.isVisible()) return;
+
+  await phoneInput.fill('0901234567');
   await page.getByRole('button', { name: 'Lưu và tiếp tục' }).click();
   await expect(page).toHaveURL(/\/app$/);
+  await expect(dashboardHeading).toBeVisible();
 }
 
 async function revokeOtherSessions(page: import('@playwright/test').Page) {
