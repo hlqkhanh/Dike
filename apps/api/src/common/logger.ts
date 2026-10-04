@@ -29,6 +29,8 @@ export function createLogger(config: ApiConfig): Logger {
         '*.password',
         '*.token',
         '*.otp',
+        '*.developmentCode',
+        '*.providerReference',
         '*.mongodbUri',
         '*.redisUrl',
         '*.s3SecretKey',

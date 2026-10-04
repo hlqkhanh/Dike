@@ -1,10 +1,10 @@
 # Dike
 
-Dike is a greenfield ride-sharing platform being designed for a controlled production pilot in Vietnam. The repository contains the Stage 2 foundation: a responsive Next.js BFF, modular NestJS API, Google Authorization Code + PKCE authentication, opaque device sessions, BullMQ worker, generated API client and local MongoDB/Redis/MinIO infrastructure.
+Dike is a greenfield ride-sharing platform being designed for a controlled production pilot in Vietnam. The repository contains the Stage 3 implementation: a responsive Next.js BFF, modular NestJS API, Google Authorization Code + PKCE authentication, opaque device sessions, BullMQ worker, generated API client and local MongoDB/Redis/MinIO infrastructure.
 
 ## Current status
 
-- Stage: **2 — Google authentication and session management**
+- Stage: **3 — Phone OTP and account roles (implementation; integration/E2E acceptance pending)**
 - Production ready: **No**
 - Existing legacy application/data: **None**
 - Target clients: responsive Next.js web first, React Native mobile later
@@ -59,7 +59,7 @@ corepack pnpm security:audit
 corepack pnpm run ci
 ```
 
-`infra:reset` is the only command that removes local Dike volumes and refuses to run without `--confirm`. Stage 2 contains authentication and phone onboarding only; it intentionally contains no ride, booking or other product-domain endpoint. Real Google setup and key-rotation guidance are in [the authentication runbook](docs/operations/authentication.md).
+`infra:reset` is the only command that removes local Dike volumes and refuses to run without `--confirm`. Stage 3 adds local/test fake OTP, phone verification, effective account roles and an audited role CLI. It contains no ride, booking or other product-domain endpoint. The real OTP provider remains blocked by `S3-PILOT-01`; see [the OTP and roles runbook](docs/operations/phone-verification.md). Real Google setup and key-rotation guidance are in [the authentication runbook](docs/operations/authentication.md).
 
 ### Troubleshooting
 
@@ -75,6 +75,8 @@ corepack pnpm run ci
 - [Stage 0 implementation specification](plan/STAGE_0.md)
 - [Stage 1 implementation specification](plan/STAGE_1.md)
 - [Stage 2 authentication specification](plan/STAGE_2.md)
+- [Stage 3 OTP and authorization specification](plan/STAGE_3.md)
+- [Phone verification and roles runbook](docs/operations/phone-verification.md)
 - [Architecture decisions](docs/architecture/README.md)
 - [Authentication threat model](docs/security/auth-threat-model.md)
 - [Security policy](SECURITY.md)

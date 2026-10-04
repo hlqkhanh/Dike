@@ -131,6 +131,13 @@ jobs:
           retention-days: 14
 
   auth-e2e:
+    strategy:
+      matrix:
+        require-phone-otp: ['true']
+    env:
+      REQUIRE_PHONE_OTP: ${{ matrix.require-phone-otp }}
+      OTP_PROVIDER: fake
+      OTP_DEV_EXPOSE_CODE: 'true'
     name: auth-e2e
     runs-on: ubuntu-latest
     timeout-minutes: 25

@@ -1,3 +1,4 @@
+import { accountRoleSchema } from '@dike/contracts';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class DeviceSummaryDto {
@@ -10,6 +11,8 @@ export class DeviceSummaryDto {
 }
 
 export class AuthUserDto {
+  @ApiProperty({ enum: accountRoleSchema.options, isArray: true })
+  roles!: string[];
   @ApiProperty({ type: String })
   id!: string;
   @ApiProperty({ type: String })

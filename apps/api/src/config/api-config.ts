@@ -55,6 +55,13 @@ const apiConfigSchema = z
     CSRF_ACTIVE_KEY_ID: z.string().min(1),
     BFF_KEYRING: z.string().min(20),
     BFF_ACTIVE_KEY_ID: z.string().min(1),
+    OTP_PROVIDER: z.enum(['fake', 'disabled']).default('disabled'),
+    OTP_DEV_EXPOSE_CODE: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .default(false),
+    OTP_CODE_KEYRING: z.string().min(20),
+    OTP_CODE_ACTIVE_KEY_ID: z.string().min(1),
     REQUIRE_PHONE_OTP: z
       .enum(['true', 'false'])
       .transform((value) => value === 'true')
@@ -63,6 +70,13 @@ const apiConfigSchema = z
   })
   .superRefine((config, context) => {
     const hosted = config.APP_ENV === 'staging' || config.APP_ENV === 'production';
+    if (hosted && (config.OTP_PROVIDER === 'fake' || config.OTP_DEV_EXPOSE_CODE)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['OTP_PROVIDER'],
+        message: 'Fake OTP and exposed codes are local/test only',
+      });
+    }
     if (hosted && config.AUTH_PROVIDER === 'mock') {
       context.addIssue({
         code: 'custom',
@@ -93,12 +107,28 @@ const apiConfigSchema = z
       'PII_KEYRING',
       'CSRF_KEYRING',
       'BFF_KEYRING',
+      'OTP_CODE_KEYRING',
     ] as const;
     const purposeSecrets = keyringFields.map((field) => ({
       field,
       secrets: keyringSecrets(config[field]),
     }));
     for (const item of purposeSecrets) {
+      const activeField = item.field.replace('_KEYRING', '_ACTIVE_KEY_ID') as
+        | 'AUTH_TOKEN_ACTIVE_KEY_ID'
+        | 'PII_ACTIVE_KEY_ID'
+        | 'CSRF_ACTIVE_KEY_ID'
+        | 'BFF_ACTIVE_KEY_ID'
+        | 'OTP_CODE_ACTIVE_KEY_ID';
+      if (
+        item.secrets &&
+        !Object.hasOwn(
+          JSON.parse(config[item.field]) as Record<string, unknown>,
+          config[activeField],
+        )
+      ) {
+        context.addIssue({ code: 'custom', path: [activeField], message: 'Active key is absent' });
+      }
       if (!item.secrets) {
         context.addIssue({
           code: 'custom',
@@ -181,6 +211,8 @@ export function openApiConfig(): ApiConfig {
     CSRF_ACTIVE_KEY_ID: 'local',
     BFF_KEYRING: keyring,
     BFF_ACTIVE_KEY_ID: 'local',
+    OTP_CODE_KEYRING: keyring,
+    OTP_CODE_ACTIVE_KEY_ID: 'local',
     REQUIRE_PHONE_OTP: 'false',
     AUTH_RATE_LIMIT_PREFIX: 'auth:openapi',
   });

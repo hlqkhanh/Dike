@@ -1,3 +1,5 @@
+import { TransactionManager } from '../database/transaction-manager.js';
+import { protectLastAdmin, serializeAuthorization } from '../authorization/role.repository.js';
 import { Inject, Injectable } from '@nestjs/common';
 import type { DeviceSessionView } from '@dike/contracts';
 import { Types, type ClientSession, type Collection, type Connection } from 'mongoose';
@@ -34,7 +36,7 @@ export class AuthRepository {
   private readonly audit: Collection<AuditDocument>;
 
   constructor(
-    @Inject(MONGO_CONNECTION) connection: Connection,
+    @Inject(MONGO_CONNECTION) private readonly connection: Connection,
     @Inject(CryptoService) private readonly crypto: CryptoService,
   ) {
     this.users = connection.collection<UserDocument>('users');
@@ -117,6 +119,9 @@ export class AuthRepository {
       displayName: identity.displayName,
       avatarUrl: identity.avatarUrl,
       phoneStatus: 'NONE',
+      roles: ['MEMBER'],
+      roleVersion: 0,
+      phoneVersion: 0,
       createdAt: now,
       updatedAt: now,
     };
@@ -255,20 +260,33 @@ export class AuthRepository {
     encrypted: NonNullable<UserDocument['phone']>,
     lookupHash: string,
   ): Promise<UserDocument | null> {
-    const now = new Date();
-    return this.users.findOneAndUpdate(
-      { _id: userId, status: 'ACTIVE' },
-      {
-        $set: {
-          phone: encrypted,
-          phoneLookupHash: lookupHash,
-          phoneStatus: 'UNVERIFIED',
-          phoneUpdatedAt: now,
-          updatedAt: now,
+    return new TransactionManager(this.connection).run(async (session) => {
+      await serializeAuthorization(this.connection, session);
+      const current = await this.users.findOne({ _id: userId, status: 'ACTIVE' }, { session });
+      if (!current) throw new ApiError('SESSION_REVOKED', 'Account is not active', 401);
+      if (current.phoneLookupHash === lookupHash) return current;
+      await protectLastAdmin(this.connection, current, session);
+      const now = new Date();
+      const updated = await this.users.findOneAndUpdate(
+        { _id: userId, phoneVersion: current.phoneVersion },
+        {
+          $set: {
+            phone: encrypted,
+            phoneLookupHash: lookupHash,
+            phoneStatus: 'UNVERIFIED',
+            phoneUpdatedAt: now,
+            updatedAt: now,
+          },
+          $unset: { phoneVerifiedAt: '', activePhoneChallengeId: '' },
+          $pull: { roles: 'VERIFIED_MEMBER' },
+          $inc: { phoneVersion: 1, roleVersion: 1 },
         },
-      },
-      { returnDocument: 'after' },
-    );
+        { session, returnDocument: 'after' },
+      );
+      if (!updated) throw new ApiError('PHONE_CHANGED', 'Phone changed', 409);
+      await this.appendAudit({ event: 'AUTH_PHONE_CHANGED', outcome: 'SUCCESS', userId }, session);
+      return updated;
+    });
   }
 
   async appendAudit(

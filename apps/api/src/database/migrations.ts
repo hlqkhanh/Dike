@@ -67,6 +67,61 @@ export const migrations: Migration[] = [
       ]);
     },
   },
+  {
+    id: '20261004-003-phone-verification-roles',
+    description: 'Backfill roles and enforce unique verified phones',
+    signature: 'roles-v1-phone-version-v1-verified-phone-unique-v1-authorization-revision-v1',
+    async apply(connection) {
+      const users = connection.collection('users');
+      const duplicates = await users
+        .aggregate([
+          { $match: { phoneStatus: 'VERIFIED', phoneLookupHash: { $type: 'string' } } },
+          { $group: { _id: '$phoneLookupHash', count: { $sum: 1 } } },
+          { $match: { count: { $gt: 1 } } },
+          { $limit: 1 },
+        ])
+        .toArray();
+      if (duplicates.length)
+        throw new Error('Verified phone conflicts require manual review before migration');
+      await users.updateMany({ roles: { $exists: false } }, [
+        {
+          $set: {
+            roles: {
+              $cond: [
+                { $eq: ['$phoneStatus', 'VERIFIED'] },
+                ['MEMBER', 'VERIFIED_MEMBER'],
+                ['MEMBER'],
+              ],
+            },
+          },
+        },
+      ]);
+      await users.updateMany({ roleVersion: { $exists: false } }, { $set: { roleVersion: 0 } });
+      await users.updateMany({ phoneVersion: { $exists: false } }, { $set: { phoneVersion: 0 } });
+      await users.createIndex(
+        { phoneLookupHash: 1 },
+        {
+          name: 'user_verified_phone_unique',
+          unique: true,
+          partialFilterExpression: {
+            phoneStatus: 'VERIFIED',
+            phoneLookupHash: { $type: 'string' },
+          },
+        },
+      );
+      if ((await users.indexes()).some((index) => index.name === 'user_phone_lookup'))
+        await users.dropIndex('user_phone_lookup');
+      await connection
+        .collection('phone_verifications')
+        .createIndex(
+          { challengeId: 1 },
+          { unique: true, name: 'phone_verification_challenge_unique' },
+        );
+      await connection
+        .collection<{ _id: string; revision: number }>('authorization_revision')
+        .updateOne({ _id: 'global' }, { $setOnInsert: { revision: 0 } }, { upsert: true });
+    },
+  },
 ];
 
 function checksum(migration: Migration): string {

@@ -23,7 +23,7 @@ export function ensureLocalEnvironment() {
     );
     if (additions.length > 0) {
       appendFileSync(localEnvPath, `\n${additions.join('\n')}\n`, { encoding: 'utf8' });
-      console.log('[env] Added missing Stage 2 local-only settings to .env.local.');
+      console.log('[env] Added missing Stage 3 local-only settings to .env.local.');
     }
     return localEnvPath;
   }
@@ -82,7 +82,11 @@ function stageTwoEnvironment() {
     'CSRF_ACTIVE_KEY_ID=local',
     `BFF_KEYRING=${keyring('bff-')}`,
     'BFF_ACTIVE_KEY_ID=local',
-    'REQUIRE_PHONE_OTP=false',
+    `OTP_CODE_KEYRING=${keyring('otp-')}`,
+    'OTP_CODE_ACTIVE_KEY_ID=local',
+    'OTP_PROVIDER=fake',
+    'OTP_DEV_EXPOSE_CODE=true',
+    'REQUIRE_PHONE_OTP=true',
     'TRUST_PROXY_HOPS=0',
   ];
 }

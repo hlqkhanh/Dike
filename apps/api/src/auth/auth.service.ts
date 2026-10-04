@@ -1,3 +1,4 @@
+import { effectiveRoles } from '../authorization/role-policy.js';
 import { randomUUID } from 'node:crypto';
 
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
@@ -28,7 +29,7 @@ import { IdentityProviderService } from './identity-provider.service.js';
 import { OAuthTransactionStore } from './oauth-transaction.store.js';
 import { RequestSecurityService } from './request-security.service.js';
 
-interface ValidSession {
+export interface ValidSession {
   session: SessionDocument;
   user: UserDocument;
 }
@@ -372,7 +373,7 @@ export class AuthService implements AuthApplication {
     return this.sessionView(valid.session, updated);
   }
 
-  private async requireAccess(accessToken: string): Promise<ValidSession> {
+  async requireAccess(accessToken: string): Promise<ValidSession> {
     if (!accessToken) {
       throw new ApiError('SESSION_REQUIRED', 'Session is required', HttpStatus.UNAUTHORIZED);
     }
@@ -401,7 +402,7 @@ export class AuthService implements AuthApplication {
     return { session, user };
   }
 
-  private assertCsrf(session: SessionDocument, token: string): void {
+  assertCsrf(session: SessionDocument, token: string): void {
     const expected = this.crypto.csrfToken(session.sessionId, session.refreshCounter);
     if (!token || !this.crypto.safeEqual(expected, token)) {
       throw new ApiError('CSRF_INVALID', 'CSRF validation failed', HttpStatus.FORBIDDEN);
@@ -470,6 +471,7 @@ export class AuthService implements AuthApplication {
         avatarUrl: user.avatarUrl,
         phoneStatus: user.phoneStatus,
         maskedPhone,
+        roles: effectiveRoles(user),
       },
       session: {
         id: session.sessionId,
@@ -484,7 +486,7 @@ export class AuthService implements AuthApplication {
     };
   }
 
-  private requestIpHash(request: Request): string {
+  requestIpHash(request: Request): string {
     return this.crypto.ipHash(request.ip || request.socket.remoteAddress || 'unknown');
   }
 

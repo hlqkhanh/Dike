@@ -11,14 +11,12 @@ export function Dashboard() {
   const router = useRouter();
   const { session, loading } = useAuth();
   const [busy, setBusy] = useState(false);
-  const requiresPhone =
-    session?.authenticated === true && session.onboarding.nextAction === 'PHONE_REQUIRED';
+  const requiresPhone = session?.authenticated === true && session.onboarding.nextAction !== 'NONE';
 
   useEffect(() => {
     if (loading) return;
     if (!session?.authenticated) router.replace('/login');
-    else if (session.onboarding.nextAction === 'PHONE_REQUIRED')
-      router.replace('/onboarding/phone');
+    else if (session.onboarding.nextAction !== 'NONE') router.replace('/onboarding/phone');
   }, [loading, router, session]);
 
   async function logout() {
@@ -52,6 +50,10 @@ export function Dashboard() {
         </p>
         <dl className="session-meta">
           <div>
+            <dt>Quyền tài khoản</dt>
+            <dd>{session.user.roles.join(', ')}</dd>
+          </div>
+          <div>
             <dt>Thiết bị</dt>
             <dd>
               {session.session.device.browser} · {session.session.device.operatingSystem}
@@ -63,6 +65,9 @@ export function Dashboard() {
           </div>
         </dl>
         <div className="button-row">
+          <a className="secondary-link" href="/onboarding/phone">
+            Cập nhật số điện thoại
+          </a>
           <a className="secondary-link" href="/settings/sessions">
             Quản lý thiết bị
           </a>

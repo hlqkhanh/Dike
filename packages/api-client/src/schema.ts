@@ -196,6 +196,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/auth/phone/verification': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['getPhoneVerification'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/phone/verification/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['startPhoneVerification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/phone/verification/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['verifyPhoneOtp'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -218,6 +266,7 @@ export interface components {
       providerError?: string;
     };
     AuthUserDto: {
+      roles: ('MEMBER' | 'VERIFIED_MEMBER' | 'APPROVED_DRIVER' | 'MODERATOR' | 'ADMIN')[];
       id: string;
       displayName: string;
       avatarUrl?: string | null;
@@ -303,6 +352,27 @@ export interface components {
           status: 'up' | 'down';
         };
       };
+    };
+    PhoneOtpChallengeDto: {
+      /** Format: uuid */
+      challengeId: string;
+      destinationMasked: string;
+      /** Format: date-time */
+      expiresAt: string;
+      /** Format: date-time */
+      resendAvailableAt: string;
+      attemptsRemaining: number;
+      developmentCode?: string;
+    };
+    PhoneVerificationDto: {
+      /** @enum {string} */
+      phoneStatus: 'NONE' | 'UNVERIFIED' | 'VERIFIED';
+      challenge: components['schemas']['PhoneOtpChallengeDto'] | null;
+    };
+    VerifyPhoneOtpDto: {
+      /** Format: uuid */
+      challengeId: string;
+      code: string;
     };
   };
   responses: never;
@@ -563,6 +633,109 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HealthResponseDto'];
+        };
+      };
+    };
+  };
+  getPhoneVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PhoneVerificationDto'];
+        };
+      };
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            error: {
+              code: string;
+              message: string;
+              requestId: string;
+            };
+          };
+        };
+      };
+    };
+  };
+  startPhoneVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PhoneOtpChallengeDto'];
+        };
+      };
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            error: {
+              code: string;
+              message: string;
+              requestId: string;
+            };
+          };
+        };
+      };
+    };
+  };
+  verifyPhoneOtp: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VerifyPhoneOtpDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthSessionResponseDto'];
+        };
+      };
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            error: {
+              code: string;
+              message: string;
+              requestId: string;
+            };
+          };
         };
       };
     };
