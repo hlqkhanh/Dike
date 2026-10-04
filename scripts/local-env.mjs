@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { existsSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 export const rootDirectory = resolve(import.meta.dirname, '..');
@@ -10,7 +10,23 @@ function secret(bytes = 24) {
 }
 
 export function ensureLocalEnvironment() {
-  if (existsSync(localEnvPath)) return localEnvPath;
+  if (existsSync(localEnvPath)) {
+    const existing = readFileSync(localEnvPath, 'utf8');
+    const names = new Set(
+      existing
+        .split(/\r?\n/u)
+        .map((line) => line.match(/^([A-Z0-9_]+)=/u)?.[1])
+        .filter(Boolean),
+    );
+    const additions = stageTwoEnvironment().filter(
+      (line) => line && !names.has(line.slice(0, line.indexOf('='))),
+    );
+    if (additions.length > 0) {
+      appendFileSync(localEnvPath, `\n${additions.join('\n')}\n`, { encoding: 'utf8' });
+      console.log('[env] Added missing Stage 2 local-only settings to .env.local.');
+    }
+    return localEnvPath;
+  }
   const redisPassword = secret();
   const accessKey = `dike${randomBytes(8).toString('hex')}`;
   const secretKey = secret(32);
@@ -34,9 +50,39 @@ export function ensureLocalEnvironment() {
     'WORKER_CONCURRENCY=2',
     'WORKER_JOB_ATTEMPTS=5',
     'WORKER_POLL_INTERVAL_MS=1000',
+    ...stageTwoEnvironment(),
     '',
   ].join('\n');
   writeFileSync(localEnvPath, content, { encoding: 'utf8', flag: 'wx', mode: 0o600 });
   console.log('[env] Created .env.local with local-only random credentials.');
   return localEnvPath;
+}
+
+function stageTwoEnvironment() {
+  const keyring = (prefix) => JSON.stringify({ local: `${prefix}${secret(32)}` });
+  return [
+    'AUTH_PROVIDER=mock',
+    'GOOGLE_CLIENT_ID=dike-local-client',
+    `GOOGLE_CLIENT_SECRET=${secret(32)}`,
+    'GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback',
+    'MOCK_OIDC_ISSUER=http://127.0.0.1:3002',
+    'WEB_BASE_URL=http://localhost:3000',
+    'API_INTERNAL_URL=http://127.0.0.1:3001/api/v1',
+    'AUTH_ACCESS_TTL_SECONDS=900',
+    'AUTH_REFRESH_ABSOLUTE_TTL_SECONDS=2592000',
+    'AUTH_REFRESH_REUSE_GRACE_SECONDS=10',
+    'AUTH_MAX_SESSIONS=10',
+    'AUTH_TRANSACTION_TTL_SECONDS=600',
+    'AUTH_RATE_LIMIT_PREFIX=auth:rate',
+    `AUTH_TOKEN_KEYRING=${keyring('auth-')}`,
+    'AUTH_TOKEN_ACTIVE_KEY_ID=local',
+    `PII_KEYRING=${keyring('pii-')}`,
+    'PII_ACTIVE_KEY_ID=local',
+    `CSRF_KEYRING=${keyring('csrf-')}`,
+    'CSRF_ACTIVE_KEY_ID=local',
+    `BFF_KEYRING=${keyring('bff-')}`,
+    'BFF_ACTIVE_KEY_ID=local',
+    'REQUIRE_PHONE_OTP=false',
+    'TRUST_PROXY_HOPS=0',
+  ];
 }

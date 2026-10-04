@@ -1,6 +1,285 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/auth/google/start": {
+      "post": {
+        "operationId": "startGoogleSignIn",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleStartDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleStartResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/google/callback": {
+      "post": {
+        "operationId": "finishGoogleSignIn",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleCallbackDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/session": {
+      "get": {
+        "operationId": "getAuthSession",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/session/refresh": {
+      "post": {
+        "operationId": "refreshAuthSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "logoutCurrentSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/logout-all": {
+      "post": {
+        "operationId": "logoutAllSessions",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/sessions": {
+      "get": {
+        "operationId": "listAuthSessions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceSessionResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/sessions/{sessionId}": {
+      "delete": {
+        "operationId": "revokeAuthSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevokeSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/phone": {
+      "put": {
+        "operationId": "updatePhoneNumber",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePhoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "getCurrentUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSessionResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["users"]
+      }
+    },
     "/health/live": {
       "get": {
         "operationId": "getLiveHealth",
@@ -66,6 +345,271 @@
   ],
   "components": {
     "schemas": {
+      "GoogleStartDto": {
+        "type": "object",
+        "properties": {
+          "returnTo": {
+            "type": "string",
+            "enum": ["/app", "/onboarding/phone", "/settings/sessions"]
+          }
+        },
+        "required": ["returnTo"]
+      },
+      "GoogleStartResponseDto": {
+        "type": "object",
+        "properties": {
+          "authorizationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "transactionToken": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["authorizationUrl", "transactionToken", "expiresAt"]
+      },
+      "GoogleCallbackDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "state": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "transactionToken": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "providerError": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": ["state", "transactionToken"]
+      },
+      "AuthUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneStatus": {
+            "type": "string",
+            "enum": ["NONE", "UNVERIFIED", "VERIFIED"]
+          },
+          "maskedPhone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["id", "displayName", "phoneStatus"]
+      },
+      "DeviceSummaryDto": {
+        "type": "object",
+        "properties": {
+          "browser": {
+            "type": "string"
+          },
+          "operatingSystem": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string",
+            "enum": ["DESKTOP", "MOBILE", "TABLET", "UNKNOWN"]
+          }
+        },
+        "required": ["browser", "operatingSystem", "deviceType"]
+      },
+      "CurrentSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastSeenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accessExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "absoluteExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "device": {
+            "$ref": "#/components/schemas/DeviceSummaryDto"
+          }
+        },
+        "required": [
+          "id",
+          "current",
+          "createdAt",
+          "lastSeenAt",
+          "accessExpiresAt",
+          "absoluteExpiresAt",
+          "device"
+        ]
+      },
+      "OnboardingDto": {
+        "type": "object",
+        "properties": {
+          "nextAction": {
+            "type": "string",
+            "enum": ["PHONE_REQUIRED", "PHONE_VERIFICATION_REQUIRED", "NONE"]
+          }
+        },
+        "required": ["nextAction"]
+      },
+      "AuthSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "authenticated": {
+            "type": "boolean",
+            "enum": [true]
+          },
+          "csrfToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/AuthUserDto"
+          },
+          "session": {
+            "$ref": "#/components/schemas/CurrentSessionDto"
+          },
+          "onboarding": {
+            "$ref": "#/components/schemas/OnboardingDto"
+          }
+        },
+        "required": ["authenticated", "csrfToken", "user", "session", "onboarding"]
+      },
+      "TokenSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "accessExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "session": {
+            "$ref": "#/components/schemas/AuthSessionResponseDto"
+          },
+          "returnTo": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "accessExpiresAt",
+          "refreshExpiresAt",
+          "session"
+        ]
+      },
+      "RefreshSessionDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "LogoutDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
+      "DeviceSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "device": {
+            "$ref": "#/components/schemas/DeviceSummaryDto"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastSeenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "absoluteExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "current", "device", "createdAt", "lastSeenAt", "absoluteExpiresAt"]
+      },
+      "RevokeSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "revokedCurrent": {
+            "type": "boolean"
+          }
+        },
+        "required": ["revokedCurrent"]
+      },
+      "UpdatePhoneDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "+84901234567"
+          }
+        },
+        "required": ["phone"]
+      },
       "HealthResponseDto": {
         "type": "object",
         "properties": {

@@ -1,10 +1,10 @@
 # Dike
 
-Dike is a greenfield ride-sharing platform being designed for a controlled production pilot in Vietnam. The repository contains the Stage 1 application foundation: a responsive Next.js shell, modular NestJS API, BullMQ worker, generated API client and local MongoDB/Redis/MinIO infrastructure.
+Dike is a greenfield ride-sharing platform being designed for a controlled production pilot in Vietnam. The repository contains the Stage 2 foundation: a responsive Next.js BFF, modular NestJS API, Google Authorization Code + PKCE authentication, opaque device sessions, BullMQ worker, generated API client and local MongoDB/Redis/MinIO infrastructure.
 
 ## Current status
 
-- Stage: **1 — application and local infrastructure foundation**
+- Stage: **2 — Google authentication and session management**
 - Production ready: **No**
 - Existing legacy application/data: **None**
 - Target clients: responsive Next.js web first, React Native mobile later
@@ -28,7 +28,7 @@ corepack pnpm dev
 
 Using `corepack pnpm` avoids depending on a global pnpm shim and works when PowerShell blocks `pnpm.ps1`.
 
-The first `pnpm dev` creates a Git-ignored `.env.local` with random local-only credentials, builds shared packages, starts MongoDB/Redis/MinIO and then runs web, API and worker. It does not delete volumes when stopped.
+The first `pnpm dev` creates a Git-ignored `.env.local` with independent random local-only keys, builds shared packages, starts MongoDB/Redis/MinIO, applies migrations, and then runs the Mock OIDC provider, web, API and worker. The provider contains synthetic `.invalid` accounts only. Stopping the command does not delete volumes.
 
 Local endpoints:
 
@@ -36,12 +36,14 @@ Local endpoints:
 - API live: `http://localhost:3001/api/v1/health/live`
 - API ready: `http://localhost:3001/api/v1/health/ready`
 - Swagger (local/test only): `http://localhost:3001/api/docs`
+- Mock OIDC (local/test only): `http://127.0.0.1:3002`
 - MinIO console: `http://localhost:9001`
 
 Useful commands:
 
 ```bash
 corepack pnpm dev:apps
+corepack pnpm dev:google
 corepack pnpm infra:up
 corepack pnpm infra:down
 corepack pnpm infra:logs
@@ -52,10 +54,12 @@ corepack pnpm db:seed
 corepack pnpm api:generate
 corepack pnpm api:check
 corepack pnpm test:integration
+corepack pnpm test:e2e:auth
+corepack pnpm security:audit
 corepack pnpm run ci
 ```
 
-`infra:reset` is the only command that removes local Dike volumes and refuses to run without `--confirm`. Stage 1 intentionally contains no login, user, ride, booking or other product-domain endpoint.
+`infra:reset` is the only command that removes local Dike volumes and refuses to run without `--confirm`. Stage 2 contains authentication and phone onboarding only; it intentionally contains no ride, booking or other product-domain endpoint. Real Google setup and key-rotation guidance are in [the authentication runbook](docs/operations/authentication.md).
 
 ### Troubleshooting
 
@@ -69,7 +73,10 @@ corepack pnpm run ci
 
 - [Product and production plan](plan/PLAN.md)
 - [Stage 0 implementation specification](plan/STAGE_0.md)
+- [Stage 1 implementation specification](plan/STAGE_1.md)
+- [Stage 2 authentication specification](plan/STAGE_2.md)
 - [Architecture decisions](docs/architecture/README.md)
+- [Authentication threat model](docs/security/auth-threat-model.md)
 - [Security policy](SECURITY.md)
 - [Contribution guide](CONTRIBUTING.md)
 

@@ -8,7 +8,8 @@
     "start": "next start --hostname 127.0.0.1 --port 3000",
     "lint": "eslint app components lib test --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --environment jsdom"
+    "test": "vitest run --environment jsdom --exclude e2e/**",
+    "test:e2e:auth": "playwright test --config playwright.config.ts"
   },
   "dependencies": {
     "@dike/api-client": "workspace:*",
@@ -20,6 +21,7 @@
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "4.3.3",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "6.9.1",

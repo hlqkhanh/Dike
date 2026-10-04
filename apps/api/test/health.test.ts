@@ -81,4 +81,15 @@ describe('foundation HTTP contract', () => {
       await productionApp.close();
     }
   });
+
+  it('keeps auth routes present in offline OpenAPI mode without creating a bypass', async () => {
+    const response = await request(server())
+      .post('/api/v1/auth/google/start')
+      .send({ returnTo: '/app' })
+      .expect(503);
+    expect((response.body as ApiErrorEnvelope).error).toMatchObject({
+      code: 'REQUEST_ERROR',
+      message: 'An unexpected error occurred',
+    });
+  });
 });

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { FOUNDATION_SAMPLE_EVENT, foundationSampleJobSchema } from '../src/index.js';
+import {
+  FOUNDATION_SAMPLE_EVENT,
+  deviceSummarySchema,
+  foundationSampleJobSchema,
+  phoneStatusSchema,
+} from '../src/index.js';
 
 describe('foundation contracts', () => {
   it('keeps the sample event versioned', () => {
@@ -16,5 +21,17 @@ describe('foundation contracts', () => {
       }),
     ).toBeTruthy();
     expect(() => foundationSampleJobSchema.parse({ eventId: 'invalid' })).toThrow();
+  });
+
+  it('validates public auth view values at runtime', () => {
+    expect(phoneStatusSchema.parse('UNVERIFIED')).toBe('UNVERIFIED');
+    expect(
+      deviceSummarySchema.parse({
+        browser: 'Chrome',
+        operatingSystem: 'Windows',
+        deviceType: 'DESKTOP',
+      }),
+    ).toBeTruthy();
+    expect(() => phoneStatusSchema.parse('BYPASSED')).toThrow();
   });
 });

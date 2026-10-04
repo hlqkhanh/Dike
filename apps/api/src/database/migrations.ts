@@ -31,6 +31,42 @@ export const migrations: Migration[] = [
         .createIndex({ eventId: 1 }, { name: 'job_execution_event_unique', unique: true });
     },
   },
+  {
+    id: '20261003-002-auth-session-indexes',
+    description: 'Create identity, user, session and audit indexes for Stage 2 authentication',
+    signature: 'auth-identity-v1-user-v1-opaque-session-v1-audit-v1',
+    async apply(connection) {
+      await connection.collection('auth_identities').createIndexes([
+        {
+          key: { provider: 1, providerSubject: 1 },
+          name: 'auth_identity_provider_subject_unique',
+          unique: true,
+        },
+        { key: { emailLookupHash: 1 }, name: 'auth_identity_email_lookup' },
+        { key: { userId: 1 }, name: 'auth_identity_user' },
+      ]);
+      await connection.collection('users').createIndexes([
+        { key: { phoneLookupHash: 1 }, name: 'user_phone_lookup', sparse: true },
+        { key: { status: 1, updatedAt: -1 }, name: 'user_status_updated' },
+      ]);
+      await connection.collection('sessions').createIndexes([
+        { key: { sessionId: 1 }, name: 'session_id_unique', unique: true },
+        { key: { accessTokenHash: 1 }, name: 'session_access_hash_unique', unique: true },
+        { key: { refreshTokenHash: 1 }, name: 'session_refresh_hash_unique', unique: true },
+        {
+          key: { previousRefreshTokenHash: 1 },
+          name: 'session_previous_refresh_hash',
+          sparse: true,
+        },
+        { key: { userId: 1, revokedAt: 1, lastSeenAt: -1 }, name: 'session_user_active' },
+        { key: { purgeAt: 1 }, name: 'session_purge_ttl', expireAfterSeconds: 0 },
+      ]);
+      await connection.collection('audit_logs').createIndexes([
+        { key: { userId: 1, createdAt: -1 }, name: 'audit_user_time' },
+        { key: { event: 1, createdAt: -1 }, name: 'audit_event_time' },
+      ]);
+    },
+  },
 ];
 
 function checksum(migration: Migration): string {

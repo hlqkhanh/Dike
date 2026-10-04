@@ -7,6 +7,7 @@ import { FoundationConfigModule } from './config/foundation-config.module.js';
 import { DatabaseModule } from './database/database.module.js';
 import { HealthModule } from './health/health.module.js';
 import { OutboxModule } from './outbox/outbox.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 export interface AppModuleOptions {
   config: ApiConfig;
@@ -21,6 +22,7 @@ export class AppModule implements NestModule {
       imports: [
         FoundationConfigModule.register(options.config),
         ...(options.connectInfrastructure ? [DatabaseModule, OutboxModule] : []),
+        AuthModule.register(options.connectInfrastructure),
         HealthModule,
       ],
       providers: [RequestContextMiddleware, RequestLoggerMiddleware],

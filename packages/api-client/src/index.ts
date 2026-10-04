@@ -7,13 +7,16 @@ export interface DikeClientOptions {
   baseUrl: string;
   fetch?: (request: Request) => Promise<Response>;
   requestId?: string;
+  headers?: HeadersInit;
 }
 
-export function createDikeClient({ baseUrl, fetch, requestId }: DikeClientOptions) {
+export function createDikeClient({ baseUrl, fetch, requestId, headers }: DikeClientOptions) {
+  const combined = new Headers(headers);
+  if (requestId) combined.set(REQUEST_ID_HEADER, requestId);
   return createClient<paths>({
     baseUrl: baseUrl.replace(/\/$/, ''),
     ...(fetch ? { fetch } : {}),
-    ...(requestId ? { headers: { [REQUEST_ID_HEADER]: requestId } } : {}),
+    headers: combined,
   });
 }
 

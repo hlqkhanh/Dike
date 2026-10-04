@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { json } from 'express';
+import { json, type Express, type Request } from 'express';
 import helmet from 'helmet';
 import type { INestApplication } from '@nestjs/common';
 
@@ -24,7 +24,14 @@ export async function createApplication(
     AppModule.register({ config, connectInfrastructure: options.mode === 'runtime' }),
     { abortOnError: false, bodyParser: false, logger: false },
   );
-  app.use(json({ limit: '1mb' }));
+  app.use(
+    json({
+      limit: '1mb',
+      verify: (request: Request & { rawBody?: Buffer }, _response, buffer) => {
+        request.rawBody = Buffer.from(buffer);
+      },
+    }),
+  );
   app.use(helmet());
   app.enableCors({
     origin: [config.WEB_ORIGIN],
@@ -32,6 +39,10 @@ export async function createApplication(
     methods: ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'],
   });
   app.setGlobalPrefix('api/v1');
+  if (config.TRUST_PROXY_HOPS > 0) {
+    const express = app.getHttpAdapter().getInstance() as Express;
+    express.set('trust proxy', config.TRUST_PROXY_HOPS);
+  }
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -39,7 +50,13 @@ export async function createApplication(
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalFilters(new ApiExceptionFilter(app.get(RequestContext), app.get(API_LOGGER)));
+  app.useGlobalFilters(
+    new ApiExceptionFilter(
+      app.get(RequestContext),
+      app.get(API_LOGGER),
+      config.APP_ENV === 'local' || config.APP_ENV === 'test',
+    ),
+  );
   app.enableShutdownHooks();
 
   if (config.APP_ENV === 'local' || config.APP_ENV === 'test') {

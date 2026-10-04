@@ -5,8 +5,10 @@ import { spawnSync } from 'node:child_process';
 const task = process.argv[2];
 const parallel = process.argv.includes('--parallel');
 
-if (task === 'test:integration' && existsSync('.env.local')) {
+if ((task === 'test:integration' || task === 'dev') && existsSync('.env.local')) {
   process.loadEnvFile('.env.local');
+}
+if (task === 'test:integration') {
   process.env.RUN_INTEGRATION = '1';
 }
 
@@ -16,14 +18,23 @@ if (!task) {
 }
 
 const manifests = [];
-for (const root of ['apps', 'packages']) {
+for (const root of ['apps', 'packages', 'tools']) {
   if (!existsSync(root)) continue;
   for (const entry of readdirSync(root, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue;
     const manifestPath = join(root, entry.name, 'package.json');
     if (!existsSync(manifestPath)) continue;
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-    if (manifest.scripts?.[task]) manifests.push(manifest.name ?? manifestPath);
+    if (
+      manifest.scripts?.[task] &&
+      !(
+        task === 'dev' &&
+        process.env.AUTH_PROVIDER === 'google' &&
+        manifest.name === '@dike/mock-idp'
+      )
+    ) {
+      manifests.push(manifest.name ?? manifestPath);
+    }
   }
 }
 

@@ -1,16 +1,13 @@
 'use client';
 
-import { createDikeClient } from '@dike/api-client';
 import { Button, Card, StatusBadge } from '@dike/ui';
 import { useQuery } from '@tanstack/react-query';
-
-import { publicApiUrl } from '../lib/environment';
+import type { HealthResponse } from '@dike/contracts';
 
 async function getHealth() {
-  const client = createDikeClient({ baseUrl: publicApiUrl() });
-  const { data, error } = await client.GET('/health/ready');
-  if (error || !data) throw new Error('API is unavailable');
-  return data;
+  const response = await fetch('/api/health', { cache: 'no-store' });
+  if (!response.ok) throw new Error('API is unavailable');
+  return (await response.json()) as HealthResponse;
 }
 
 export function FoundationStatus() {
@@ -34,10 +31,8 @@ export function FoundationStatus() {
   return (
     <Card className="status-card" aria-labelledby="foundation-title">
       <StatusBadge status={status}>{label}</StatusBadge>
-      <h2 id="foundation-title">Stage 1 Foundation</h2>
-      <p>
-        Trạng thái trực tiếp của API và các dịch vụ local. Chưa có tài khoản hoặc dữ liệu chuyến đi.
-      </p>
+      <h2 id="foundation-title">Nền tảng hệ thống</h2>
+      <p>Trạng thái trực tiếp của API và các dịch vụ hạ tầng local.</p>
       {query.data ? (
         <div className="status-meta">
           {Object.entries(query.data.dependencies ?? {}).map(([name, health]) => (

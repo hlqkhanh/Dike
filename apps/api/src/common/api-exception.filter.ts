@@ -12,12 +12,14 @@ import type { Logger } from 'pino';
 
 import { RequestContext } from './request-context.js';
 import { API_LOGGER } from './tokens.js';
+import { ApiError } from './api-error.js';
 
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly context: RequestContext,
     @Inject(API_LOGGER) private readonly logger: Logger,
+    private readonly diagnostics = false,
   ) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -25,6 +27,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
     const body = exception instanceof HttpException ? exception.getResponse() : undefined;
+    const structured =
+      typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : undefined;
     const validation =
       status === 400 && typeof body === 'object' && body !== null
         ? (body as { message?: unknown }).message
@@ -33,29 +37,50 @@ export class ApiExceptionFilter implements ExceptionFilter {
       ? validation.map((message) => ({ message: String(message) }))
       : undefined;
     const code =
-      status === 400
-        ? 'VALIDATION_ERROR'
-        : status === 404
-          ? 'NOT_FOUND'
-          : status >= 500
-            ? 'INTERNAL_ERROR'
-            : 'REQUEST_ERROR';
+      typeof structured?.code === 'string'
+        ? structured.code
+        : status === 400
+          ? 'VALIDATION_ERROR'
+          : status === 404
+            ? 'NOT_FOUND'
+            : status >= 500
+              ? 'INTERNAL_ERROR'
+              : 'REQUEST_ERROR';
     const message =
       status >= 500
         ? 'An unexpected error occurred'
-        : exception instanceof HttpException
-          ? exception.message
-          : 'Request failed';
+        : typeof structured?.message === 'string'
+          ? structured.message
+          : exception instanceof HttpException
+            ? exception.message
+            : 'Request failed';
 
     if (status >= 500) {
       this.logger.error(
-        { requestId: this.context.requestId, errorType: exception?.constructor?.name },
+        {
+          requestId: this.context.requestId,
+          errorType: exception?.constructor?.name,
+          ...(this.diagnostics && exception instanceof Error
+            ? { errorMessage: exception.message.slice(0, 300) }
+            : {}),
+        },
         'request failed',
       );
     }
+    const structuredDetails = Array.isArray(structured?.details)
+      ? (structured.details as ApiErrorDetail[])
+      : details;
     const envelope: ApiErrorEnvelope = {
-      error: { code, message, requestId: this.context.requestId, ...(details ? { details } : {}) },
+      error: {
+        code,
+        message,
+        requestId: this.context.requestId,
+        ...(structuredDetails ? { details: structuredDetails } : {}),
+      },
     };
+    if (exception instanceof ApiError && exception.retryAfterSeconds !== undefined) {
+      response.setHeader('retry-after', String(exception.retryAfterSeconds));
+    }
     response.status(status).json(envelope);
   }
 }
