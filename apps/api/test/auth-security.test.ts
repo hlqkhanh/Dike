@@ -33,7 +33,9 @@ describe('authentication cryptography', () => {
 
   it('detects ciphertext tampering', () => {
     const value = crypto.encrypt('alice@dike.invalid', 'identity:one:email');
-    const tampered = { ...value, ciphertext: `${value.ciphertext.slice(0, -1)}A` };
+    const buf = Buffer.from(value.ciphertext, 'base64url');
+    buf.writeUInt8(buf.readUInt8(0) ^ 1, 0);
+    const tampered = { ...value, ciphertext: buf.toString('base64url') };
     expect(() => crypto.decrypt(tampered, 'identity:one:email')).toThrow();
   });
 

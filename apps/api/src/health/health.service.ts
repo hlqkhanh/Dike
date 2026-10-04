@@ -1,3 +1,5 @@
+import { ObjectStorage } from '@dike/storage';
+import { FILE_STORAGE } from '../files/storage.module.js';
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { HealthResponse } from '@dike/contracts';
 import type { Redis } from 'ioredis';
@@ -15,6 +17,7 @@ export class HealthService {
     @Inject(API_CONFIG) private readonly config: ApiConfig,
     @Optional() @Inject(MONGO_CONNECTION) private readonly mongo?: Connection,
     @Optional() @Inject(REDIS_CONNECTION) private readonly redis?: Redis,
+    @Optional() @Inject(FILE_STORAGE) private readonly storage?: ObjectStorage,
   ) {}
 
   live(): HealthResponse {
@@ -36,7 +39,12 @@ export class HealthService {
         if (!this.redis) throw new Error('unavailable');
         await this.redis.ping();
       }),
-      this.check('minio', async () => {
+      this.check('storage', async () => {
+        if (this.storage) {
+          await this.storage.ready();
+          return;
+        }
+        if (['staging', 'production'].includes(this.config.APP_ENV)) throw new Error('unavailable');
         const response = await fetch(new URL('/minio/health/live', this.config.S3_ENDPOINT), {
           signal: AbortSignal.timeout(2_000),
         });

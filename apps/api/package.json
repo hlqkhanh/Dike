@@ -10,7 +10,7 @@
     "lint": "eslint src test --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude test/**/*.integration.test.ts",
-    "test:integration": "vitest run test/database.integration.test.ts test/auth.integration.test.ts test/stage3.integration.test.ts",
+    "test:integration": "vitest run test/database.integration.test.ts test/auth.integration.test.ts test/stage3.integration.test.ts test/stage4.integration.test.ts",
     "openapi:generate": "tsx src/openapi/generate.ts && corepack pnpm exec prettier --write openapi.json",
     "db:migrate": "tsx --env-file=../../.env.local src/database/migration-cli.ts up",
     "db:migrate:status": "tsx --env-file=../../.env.local src/database/migration-cli.ts status",
@@ -38,7 +38,8 @@
     "pino": "10.3.1",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
-    "zod": "4.6.5"
+    "zod": "4.6.5",
+    "@dike/storage": "workspace:*"
   },
   "devDependencies": {
     "@nestjs/testing": "12.1.2",

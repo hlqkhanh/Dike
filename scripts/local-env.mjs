@@ -61,6 +61,8 @@ export function ensureLocalEnvironment() {
 function stageTwoEnvironment() {
   const keyring = (prefix) => JSON.stringify({ local: `${prefix}${secret(32)}` });
   return [
+    'S3_PUBLIC_BASE_URL=http://127.0.0.1:9000/dike-local-public',
+    'RETENTION_POLICY_APPROVED=false',
     'AUTH_PROVIDER=mock',
     'GOOGLE_CLIENT_ID=dike-local-client',
     `GOOGLE_CLIENT_SECRET=${secret(32)}`,

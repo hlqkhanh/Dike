@@ -89,7 +89,9 @@ jobs:
       - name: Start test infrastructure
         run: pnpm infra:up
       - name: Run migrations
-        run: pnpm db:migrate
+        run: pnpm --filter "./packages/**" build && pnpm db:migrate
+      - name: Configure local storage lifecycle
+        run: pnpm storage:local
       - name: Run integration tests
         run: pnpm test:integration
       - name: Capture container logs

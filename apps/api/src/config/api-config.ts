@@ -29,6 +29,11 @@ const apiConfigSchema = z
     S3_BUCKET_PRIVATE: z.string().min(3),
     S3_ACCESS_KEY: z.string().min(8),
     S3_SECRET_KEY: z.string().min(16),
+    S3_PUBLIC_BASE_URL: z.string().url().default('http://127.0.0.1:9000/dike-local-public'),
+    RETENTION_POLICY_APPROVED: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .default(false),
     S3_REGION: z.string().min(1).default('us-east-1'),
     AUTH_PROVIDER: z.enum(['google', 'mock']).default('mock'),
     GOOGLE_CLIENT_ID: z.string().min(3),
@@ -70,6 +75,22 @@ const apiConfigSchema = z
   })
   .superRefine((config, context) => {
     const hosted = config.APP_ENV === 'staging' || config.APP_ENV === 'production';
+    if (config.S3_BUCKET_PUBLIC === config.S3_BUCKET_PRIVATE)
+      context.addIssue({
+        code: 'custom',
+        path: ['S3_BUCKET_PRIVATE'],
+        message: 'Separate buckets required',
+      });
+    if (
+      hosted &&
+      (!config.S3_ENDPOINT.startsWith('https://') ||
+        !config.S3_PUBLIC_BASE_URL.startsWith('https://'))
+    )
+      context.addIssue({
+        code: 'custom',
+        path: ['S3_ENDPOINT'],
+        message: 'Hosted storage requires HTTPS',
+      });
     if (hosted && (config.OTP_PROVIDER === 'fake' || config.OTP_DEV_EXPOSE_CODE)) {
       context.addIssue({
         code: 'custom',

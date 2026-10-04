@@ -37,7 +37,8 @@
     "auth:role:list": "corepack pnpm --filter @dike/api auth:role:list",
     "auth:role:bootstrap-admin": "corepack pnpm --filter @dike/api auth:role:bootstrap-admin",
     "auth:role:grant": "corepack pnpm --filter @dike/api auth:role:grant",
-    "auth:role:revoke": "corepack pnpm --filter @dike/api auth:role:revoke"
+    "auth:role:revoke": "corepack pnpm --filter @dike/api auth:role:revoke",
+    "storage:local": "corepack pnpm --filter @dike/storage build && node scripts/storage-local.mjs"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx}": [
@@ -76,5 +77,8 @@
       "esbuild",
       "sharp"
     ]
+  },
+  "dependencies": {
+    "@dike/storage": "workspace:*"
   }
 }

@@ -19,6 +19,20 @@ const infra = spawnSync(process.execPath, [resolve(import.meta.dirname, 'infra.m
 if (infra.status !== 0) process.exit(infra.status ?? 1);
 
 const command = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+const packages = spawnSync(command, ['pnpm', '--filter', './packages/**', 'build'], {
+  cwd: rootDirectory,
+  env: process.env,
+  stdio: 'inherit',
+  shell: process.platform === 'win32',
+});
+if (packages.status !== 0) process.exit(packages.status ?? 1);
+const storageSetup = spawnSync(command, ['pnpm', 'storage:local'], {
+  cwd: rootDirectory,
+  env: process.env,
+  stdio: 'inherit',
+  shell: process.platform === 'win32',
+});
+if (storageSetup.status !== 0) process.exit(storageSetup.status ?? 1);
 const migration = spawnSync(command, ['pnpm', 'db:migrate'], {
   cwd: rootDirectory,
   env: { ...process.env, COREPACK_HOME: resolve(rootDirectory, '.corepack') },

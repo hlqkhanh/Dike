@@ -1,3 +1,5 @@
+import { ObjectStorage } from '@dike/storage';
+import { RetentionService } from './retention.js';
 import { FOUNDATION_QUEUE } from '@dike/contracts';
 import { Queue, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
@@ -51,11 +53,33 @@ void dispatcher.run().catch((error: unknown) => {
   process.exitCode = 1;
 });
 
+const storage = new ObjectStorage(config.storage);
+const retention = new RetentionService(mongo, storage);
+let retentionWork: Promise<void> | undefined;
+const runRetention = () => {
+  if (!config.retentionEnabled || retentionWork) return;
+  retentionWork = retention
+    .sweep()
+    .catch((error: unknown) =>
+      logger.warn(
+        { errorType: error instanceof Error ? error.name : 'UnknownError' },
+        'retention sweep failed; will retry',
+      ),
+    )
+    .finally(() => {
+      retentionWork = undefined;
+    });
+};
+const retentionTimer = setInterval(runRetention, 60000);
+runRetention();
 let shuttingDown = false;
 async function shutdown(): Promise<void> {
   if (shuttingDown) return;
   shuttingDown = true;
   dispatcher.stop();
+  clearInterval(retentionTimer);
+  await retentionWork;
+  storage.close();
   await worker.pause(true);
   await Promise.allSettled([
     worker.close(),

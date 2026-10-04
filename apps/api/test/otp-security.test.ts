@@ -44,6 +44,8 @@ describe('OTP and authorization security', () => {
       REQUIRE_PHONE_OTP: 'true',
       OTP_PROVIDER: 'disabled',
       OTP_DEV_EXPOSE_CODE: 'false',
+      S3_ENDPOINT: 'https://storage.example',
+      S3_PUBLIC_BASE_URL: 'https://avatars.example',
       WEB_BASE_URL: 'https://dike.example',
       GOOGLE_REDIRECT_URI: 'https://dike.example/api/auth/google/callback',
       GOOGLE_CLIENT_SECRET: 'a'.repeat(40),

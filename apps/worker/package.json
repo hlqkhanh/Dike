@@ -19,7 +19,8 @@
     "ioredis": "6.0.0",
     "mongoose": "9.10.3",
     "pino": "10.3.1",
-    "zod": "4.6.5"
+    "zod": "4.6.5",
+    "@dike/storage": "workspace:*"
   },
   "devDependencies": {
     "tsx": "4.20.6",

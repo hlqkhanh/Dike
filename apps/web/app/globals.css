@@ -267,3 +267,46 @@ h1 {
     flex-direction: column;
   }
 }
+
+.profile-settings {
+  width: 100%;
+  max-width: 760px;
+  display: grid;
+  gap: 20px;
+}
+.profile-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.auth-form textarea,
+.auth-form select {
+  font: inherit;
+  padding: 12px;
+  border: 1px solid var(--dike-border);
+  border-radius: var(--dike-radius-sm);
+  color: var(--dike-foreground);
+  background: var(--dike-surface);
+}
+.auth-form .check-option {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.auth-form .check-option input {
+  min-height: 20px;
+  width: 20px;
+}
+.file-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.file-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--dike-border);
+  padding: 12px 0;
+}

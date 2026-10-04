@@ -17,7 +17,15 @@ export interface EncryptedValue {
 
 export interface UserDocument {
   _id: Types.ObjectId;
-  status: 'ACTIVE' | 'SUSPENDED' | 'DELETED';
+  status: 'ACTIVE' | 'SUSPENDED' | 'DELETION_PENDING' | 'DELETED';
+  bio?: string;
+  profileEdited?: boolean;
+  avatarFileId?: Types.ObjectId;
+  privacy?: import('@dike/contracts').PrivacySettings;
+  profileVersion?: number;
+  deletionRequestedAt?: Date;
+  deletionDueAt?: Date;
+  purgeAt?: Date;
   displayName: string;
   avatarUrl: string | null;
   phone?: EncryptedValue;
@@ -54,7 +62,8 @@ export type SessionRevokeReason =
   | 'USER_REVOKED'
   | 'REFRESH_REUSE'
   | 'SESSION_LIMIT'
-  | 'EXPIRED';
+  | 'EXPIRED'
+  | 'ACCOUNT_DELETION';
 
 export interface SessionDocument {
   _id: Types.ObjectId;

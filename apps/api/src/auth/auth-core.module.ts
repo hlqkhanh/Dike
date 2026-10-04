@@ -25,7 +25,9 @@ export class AuthCoreModule {
     ];
     return {
       module: AuthCoreModule,
-      exports: enabled ? [AUTH_APPLICATION, AuthService, CryptoService] : [AUTH_APPLICATION],
+      exports: enabled
+        ? [AUTH_APPLICATION, AuthService, CryptoService, AuthRateLimitService]
+        : [AUTH_APPLICATION],
       providers: enabled
         ? runtimeProviders
         : [

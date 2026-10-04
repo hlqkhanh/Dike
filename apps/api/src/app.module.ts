@@ -1,3 +1,6 @@
+import { UsersModule } from './users/users.module.js';
+import { FilesModule } from './files/files.module.js';
+import { StorageModule } from './files/storage.module.js';
 import { type MiddlewareConsumer, Module, type NestModule } from '@nestjs/common';
 
 import { RequestContextMiddleware } from './common/request-context.middleware.js';
@@ -23,6 +26,9 @@ export class AppModule implements NestModule {
         FoundationConfigModule.register(options.config),
         ...(options.connectInfrastructure ? [DatabaseModule, OutboxModule] : []),
         AuthModule.register(options.connectInfrastructure),
+        StorageModule.register(options.connectInfrastructure),
+        UsersModule.register(options.connectInfrastructure),
+        FilesModule.register(options.connectInfrastructure),
         HealthModule,
       ],
       providers: [RequestContextMiddleware, RequestLoggerMiddleware],

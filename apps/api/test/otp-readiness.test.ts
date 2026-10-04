@@ -25,7 +25,7 @@ describe('OTP readiness gate', () => {
         dependencies: {
           mongodb: { status: 'up' },
           redis: { status: 'up' },
-          minio: { status: 'up' },
+          storage: { status: 'up' },
           otp: { status: 'down' },
         },
       });
