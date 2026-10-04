@@ -36,6 +36,11 @@ interface AuthorizationCode {
 const accounts: Record<string, Account> = {
   alice: { sub: 'mock-google-alice', email: 'alice@dike.invalid', name: 'Alice Dike' },
   bob: { sub: 'mock-google-bob', email: 'bob@dike.invalid', name: 'Bob Dike' },
+  'otp-tester': {
+    sub: 'mock-google-otp-tester',
+    email: 'otp-tester@dike.invalid',
+    name: 'OTP Tester',
+  },
   'alice-conflict': {
     sub: 'mock-google-alice-conflict',
     email: 'alice@dike.invalid',
