@@ -618,6 +618,8 @@ Chi tiết task, ownership và nghiệm thu: [STAGE_1.md](STAGE_1.md).
 
 ### Giai đoạn 3 — OTP và phân quyền tài khoản
 
+Trạng thái: đã bổ sung implementation OTP local/test và role; chưa nghiệm thu integration/E2E trên môi trường hiện tại. Cổng production `S3-PILOT-01` vẫn mở, chưa có provider thật. Xem [runbook](../docs/operations/phone-verification.md).
+
 - Tạo `OtpProvider` cho fake local/test và provider production.
 - Rate limit theo IP, user, số điện thoại và thiết bị; OTP có hạn dùng, số lần thử và cooldown.
 - Không lưu OTP dạng rõ; số Việt Nam chuẩn hóa E.164 và chỉ unique sau khi xác minh.

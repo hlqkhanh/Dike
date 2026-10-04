@@ -9,6 +9,26 @@ export const BFF_NONCE_HEADER = 'x-dike-bff-nonce' as const;
 export const BFF_SIGNATURE_HEADER = 'x-dike-bff-signature' as const;
 export const CSRF_HEADER = 'x-csrf-token' as const;
 
+export const accountRoleSchema = z.enum([
+  'MEMBER',
+  'VERIFIED_MEMBER',
+  'APPROVED_DRIVER',
+  'MODERATOR',
+  'ADMIN',
+]);
+export type AccountRole = z.infer<typeof accountRoleSchema>;
+export interface PhoneOtpChallengeView {
+  challengeId: string;
+  destinationMasked: string;
+  expiresAt: string;
+  resendAvailableAt: string;
+  attemptsRemaining: number;
+  developmentCode?: string;
+}
+export interface PhoneVerificationView {
+  phoneStatus: PhoneStatus;
+  challenge: PhoneOtpChallengeView | null;
+}
 export const phoneStatusSchema = z.enum(['NONE', 'UNVERIFIED', 'VERIFIED']);
 export type PhoneStatus = z.infer<typeof phoneStatusSchema>;
 
@@ -35,6 +55,7 @@ export interface AuthenticatedSessionView {
     avatarUrl: string | null;
     phoneStatus: PhoneStatus;
     maskedPhone: string | null;
+    roles: AccountRole[];
   };
   session: {
     id: string;
@@ -79,6 +100,19 @@ export const authErrorCodes = [
   'CSRF_INVALID',
   'ORIGIN_NOT_ALLOWED',
   'PHONE_INVALID',
+  'OTP_NOT_CONFIGURED',
+  'OTP_PROVIDER_UNAVAILABLE',
+  'OTP_CHALLENGE_NOT_FOUND',
+  'OTP_CHALLENGE_EXPIRED',
+  'OTP_CODE_INVALID',
+  'OTP_ATTEMPTS_EXHAUSTED',
+  'OTP_RESEND_TOO_SOON',
+  'OTP_ALREADY_VERIFIED',
+  'PHONE_CHANGED',
+  'PHONE_ALREADY_IN_USE',
+  'ROLE_REQUIRED',
+  'ROLE_OPERATION_FORBIDDEN',
+  'ROLE_LAST_ADMIN',
   'RATE_LIMITED',
   'INTERNAL_CLIENT_UNAUTHORIZED',
 ] as const;

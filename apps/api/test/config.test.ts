@@ -52,6 +52,8 @@ describe('API configuration', () => {
       CSRF_ACTIVE_KEY_ID: 'current',
       BFF_KEYRING: keyring('d'),
       BFF_ACTIVE_KEY_ID: 'current',
+      OTP_CODE_KEYRING: keyring('e'),
+      OTP_CODE_ACTIVE_KEY_ID: 'current',
     };
     expect(loadApiConfig(environment).APP_ENV).toBe('production');
   });

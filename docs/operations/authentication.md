@@ -31,4 +31,4 @@ Each keyring is a JSON object keyed by key ID. Add the new key alongside the old
 
 ## Production gate
 
-Hosted configuration requires HTTPS, secure cookies, real Google OIDC and `REQUIRE_PHONE_OTP=true`. Stage 2 does not implement OTP delivery, so product actions requiring a verified phone remain blocked until Stage 3.
+Hosted configuration requires HTTPS, secure cookies, real Google OIDC and `REQUIRE_PHONE_OTP=true`. Stage 3 implements fake OTP only for local/test. Hosted deployments use the disabled provider and readiness remains unavailable until S3-PILOT-01 supplies a real provider. See [OTP and roles](phone-verification.md).

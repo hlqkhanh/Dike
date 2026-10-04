@@ -33,7 +33,11 @@
     "security:audit": "corepack pnpm audit --prod --audit-level high",
     "sbom": "cdxgen -t js --no-recurse --no-install-deps --fail-on-error --output sbom.cdx.json .",
     "ci": "corepack pnpm format:check && corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build && corepack pnpm api:check && corepack pnpm security:secrets",
-    "prepare": "husky"
+    "prepare": "husky",
+    "auth:role:list": "corepack pnpm --filter @dike/api auth:role:list",
+    "auth:role:bootstrap-admin": "corepack pnpm --filter @dike/api auth:role:bootstrap-admin",
+    "auth:role:grant": "corepack pnpm --filter @dike/api auth:role:grant",
+    "auth:role:revoke": "corepack pnpm --filter @dike/api auth:role:revoke"
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx}": [

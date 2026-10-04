@@ -329,6 +329,175 @@
         "summary": "",
         "tags": ["health"]
       }
+    },
+    "/auth/phone/verification": {
+      "get": {
+        "operationId": "getPhoneVerification",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhoneVerificationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/phone/verification/start": {
+      "post": {
+        "operationId": "startPhoneVerification",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhoneOtpChallengeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
+    },
+    "/auth/phone/verification/verify": {
+      "post": {
+        "operationId": "verifyPhoneOtp",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPhoneOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthSessionResponseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["error"],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message", "requestId"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "",
+        "tags": ["auth"]
+      }
     }
   },
   "info": {
@@ -398,6 +567,13 @@
       "AuthUserDto": {
         "type": "object",
         "properties": {
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["MEMBER", "VERIFIED_MEMBER", "APPROVED_DRIVER", "MODERATOR", "ADMIN"]
+            }
+          },
           "id": {
             "type": "string"
           },
@@ -417,7 +593,7 @@
             "nullable": true
           }
         },
-        "required": ["id", "displayName", "phoneStatus"]
+        "required": ["roles", "id", "displayName", "phoneStatus"]
       },
       "DeviceSummaryDto": {
         "type": "object",
@@ -636,6 +812,72 @@
           }
         },
         "required": ["status", "requestId"]
+      },
+      "PhoneOtpChallengeDto": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "destinationMasked": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resendAvailableAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "attemptsRemaining": {
+            "type": "number"
+          },
+          "developmentCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "challengeId",
+          "destinationMasked",
+          "expiresAt",
+          "resendAvailableAt",
+          "attemptsRemaining"
+        ]
+      },
+      "PhoneVerificationDto": {
+        "type": "object",
+        "properties": {
+          "phoneStatus": {
+            "type": "string",
+            "enum": ["NONE", "UNVERIFIED", "VERIFIED"]
+          },
+          "challenge": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PhoneOtpChallengeDto"
+              }
+            ]
+          }
+        },
+        "required": ["phoneStatus", "challenge"]
+      },
+      "VerifyPhoneOtpDto": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^\\d{6}$"
+          }
+        },
+        "required": ["challengeId", "code"]
       }
     }
   }

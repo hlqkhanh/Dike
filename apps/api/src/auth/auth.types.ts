@@ -1,5 +1,6 @@
 import type {
   AuthSessionView,
+  AccountRole,
   DeviceSessionView,
   DeviceSummary,
   PhoneStatus,
@@ -23,6 +24,11 @@ export interface UserDocument {
   phoneLookupHash?: string;
   phoneStatus: PhoneStatus;
   phoneUpdatedAt?: Date;
+  roles: AccountRole[];
+  roleVersion: number;
+  phoneVersion: number;
+  phoneVerifiedAt?: Date;
+  activePhoneChallengeId?: string;
   createdAt: Date;
   updatedAt: Date;
 }

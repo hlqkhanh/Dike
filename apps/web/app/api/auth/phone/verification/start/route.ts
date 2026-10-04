@@ -1,17 +1,15 @@
 import { NextResponse, type NextRequest } from 'next/server';
-
 import {
   accessCookieName,
   requireMutationSecurity,
   safeErrorResponse,
   signedApiClient,
-} from '../../../../lib/server/bff';
-
-export async function PUT(request: NextRequest) {
+} from '../../../../../../lib/server/bff';
+export async function POST(request: NextRequest) {
   try {
     const csrf = requireMutationSecurity(request);
-    const accessToken = request.cookies.get(accessCookieName())?.value;
-    if (!accessToken)
+    const token = request.cookies.get(accessCookieName())?.value;
+    if (!token)
       return safeErrorResponse(
         {
           error: {
@@ -22,17 +20,20 @@ export async function PUT(request: NextRequest) {
         },
         401,
       );
-    const input = (await request.json()) as { phone?: unknown };
-    const body = { phone: typeof input.phone === 'string' ? input.phone : '' };
-    const headers = { authorization: `Bearer ${accessToken}`, 'x-csrf-token': csrf };
+    const body = undefined;
+    const headers = { authorization: `Bearer ${token}`, 'x-csrf-token': csrf };
     const { data, error, response } = await signedApiClient(
-      'PUT',
-      '/auth/phone',
+      'POST',
+      '/auth/phone/verification/start',
       body,
       headers,
-    ).PUT('/auth/phone', { body });
-    const upstreamStatus = response.status;
-    if (error || !data) return safeErrorResponse(error, upstreamStatus);
+    ).POST('/auth/phone/verification/start', {});
+    if (error || !data) {
+      const result = safeErrorResponse(error, response.status);
+      const retry = response.headers.get('retry-after');
+      if (retry && /^\d+$/.test(retry)) result.headers.set('retry-after', retry);
+      return result;
+    }
     return NextResponse.json(data, { headers: { 'cache-control': 'no-store, private' } });
   } catch (error) {
     return safeErrorResponse(error, 400);

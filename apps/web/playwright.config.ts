@@ -10,8 +10,8 @@ export default defineConfig({
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: 'http://localhost:3000',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    trace: 'off',
+    screenshot: 'off',
     video: 'off',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
@@ -19,6 +19,9 @@ export default defineConfig({
     command: 'corepack pnpm dev',
     cwd: '../..',
     env: {
+      REQUIRE_PHONE_OTP: 'true',
+      OTP_PROVIDER: 'fake',
+      OTP_DEV_EXPOSE_CODE: 'true',
       AUTH_RATE_LIMIT_PREFIX: `auth:e2e:${process.pid}:${Date.now()}`,
     },
     url: 'http://localhost:3000/api/health',

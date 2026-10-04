@@ -23,6 +23,11 @@ export class HealthService {
 
   async ready(): Promise<HealthResponse> {
     const checks = await Promise.all([
+      this.check('otp', () => {
+        if (this.config.REQUIRE_PHONE_OTP && this.config.OTP_PROVIDER === 'disabled')
+          throw new Error('unavailable');
+        return Promise.resolve();
+      }),
       this.check('mongodb', async () => {
         if (!this.mongo?.db) throw new Error('unavailable');
         await this.mongo.db.admin().ping();

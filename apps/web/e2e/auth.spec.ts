@@ -9,15 +9,26 @@ async function signIn(page: import('@playwright/test').Page, account: RegExp) {
   await expect(page).toHaveURL(/\/(app|onboarding\/phone)$/);
 }
 
-async function ensurePhone(page: import('@playwright/test').Page) {
+async function ensurePhone(page: import('@playwright/test').Page, phone = '0901234567') {
   const phoneInput = page.getByLabel('Số điện thoại Việt Nam');
   const dashboardHeading = page.getByRole('heading', { name: /Xin chào/ });
 
   await expect(phoneInput.or(dashboardHeading)).toBeVisible();
   if (await dashboardHeading.isVisible()) return;
 
-  await phoneInput.fill('0901234567');
+  await phoneInput.fill(phone);
   await page.getByRole('button', { name: 'Lưu và tiếp tục' }).click();
+  await page.getByRole('button', { name: 'Gửi mã xác minh', exact: true }).click();
+  const code = await page.getByTestId('development-code').textContent();
+  if (!code) throw new Error('Development OTP unavailable');
+  await expect(page.getByRole('button', { name: /Gửi lại sau/ })).toBeDisabled();
+  const wrong = String((Number(code) + 1) % 1000000).padStart(6, '0');
+  await page.getByLabel('Mã xác minh 6 chữ số').fill(wrong);
+  await page.getByRole('button', { name: 'Xác minh và tiếp tục' }).click();
+  await expect(page.getByRole('alert')).toHaveText('Mã không đúng. Vui lòng thử lại.');
+  await expect(page.getByText('Số lần thử còn lại: 4')).toBeVisible();
+  await page.getByLabel('Mã xác minh 6 chữ số').fill(code);
+  await page.getByRole('button', { name: 'Xác minh và tiếp tục' }).click();
   await expect(page).toHaveURL(/\/app$/);
   await expect(dashboardHeading).toBeVisible();
 }
@@ -36,10 +47,11 @@ async function revokeOtherSessions(page: import('@playwright/test').Page) {
   }
 }
 
-test('completes mock OIDC login and unverified-phone onboarding', async ({ page }) => {
+test('completes mock OIDC login and verified-phone onboarding', async ({ page }) => {
   await signIn(page, /Alice Dike/);
   await ensurePhone(page);
-  await expect(page.getByText('Số điện thoại chưa xác minh')).toBeVisible();
+  await expect(page.getByText('Đã xác minh', { exact: true })).toBeVisible();
+  await expect(page.getByText('MEMBER, VERIFIED_MEMBER', { exact: true })).toBeVisible();
   await expect(page.evaluate(() => localStorage.length)).resolves.toBe(0);
   await expect(page.evaluate(() => sessionStorage.length)).resolves.toBe(0);
 
@@ -93,10 +105,10 @@ test('revokes one device without logging out the other device', async ({ browser
   const second = await secondContext.newPage();
   try {
     await signIn(first, /Bob Dike/);
-    await ensurePhone(first);
+    await ensurePhone(first, '0901234568');
     await revokeOtherSessions(first);
     await signIn(second, /Bob Dike/);
-    await ensurePhone(second);
+    await ensurePhone(second, '0901234568');
 
     await first.goto('/settings/sessions');
     await expect(first.locator('.session-item')).toHaveCount(2);
